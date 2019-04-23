@@ -1,7 +1,8 @@
 # SITE SPECIFIC
-app/static/kartoteka/upload/*
-app/static/admin/upload/*
+migrations/
 
+# Geany files
+*.geany
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
