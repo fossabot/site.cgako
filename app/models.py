@@ -7,7 +7,7 @@ class cmsUsers(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     login = db.Column(db.String(20), unique=True)
     password = db.Column(db.String(32))
-    socials = db.Column(db.JsonEncodedDict)
+    socials = db.Column(db.JSON)
     photo = db.Column(db.String(50))
     name = db.Column(db.String(15))
     surname = db.Column(db.String(15))
