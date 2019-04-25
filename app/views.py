@@ -4,6 +4,14 @@
 from app import app, db
 from flask import jsonify
 
-@app.route('/ping', methods=['GET'])
+from app.models import cmsUsers
+from app.models import cmsUsersSchema
+
+@app.route('/users', methods=['GET'])
 def ping_pong():
-    return jsonify('pong!')
+    
+    user_schema = cmsUsersSchema(many=True)
+    user = cmsUsers.query.all()
+    jdata = user_schema.dump(user)
+    
+    return jsonify(jdata.data)

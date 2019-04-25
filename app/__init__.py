@@ -5,8 +5,9 @@ from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_marshmallow import Marshmallow
 #from flask_thumbnails import Thumbnail
-#from flask_marshmallow import Marshmallow
+
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -14,9 +15,10 @@ app.config.from_object('config')
 cors = CORS(app)
 db = SQLAlchemy(app)
 migrate = Migrate (app, db)
+ma = Marshmallow(app)
 
 #thumb = Thumbnail(app)
-#ma = Marshmallow(app)
+
 
 from app import views, models
 
