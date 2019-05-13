@@ -3,10 +3,12 @@
 import sys, traceback
 
 from app import app, db
-from flask import json, jsonify, Blueprint, request, Response, url_for
+from flask import json, jsonify, Blueprint, request, Response, url_for, abort
 
 from app.models import cmsUsers
 from app.models import cmsUsersSchema
+
+from config import LIMIT
 
 API0 = Blueprint('API0', __name__)
 
@@ -31,8 +33,40 @@ def server_error(dbg=None):
 
 # Пагинация
 def pagination_of_list(query_result, url, start, limit):
+    print(query_result)
+    print(url)
+    print(start)
+    print(limit)
     
-    return "OK"
+    records_count = len(query_result)
+    
+    if (records_count < start): # Проверка существования страницы
+        abort(404)                       # Сделать адекватную обработку
+
+    response_obj = {}
+    response_obj['start'] = start
+    response_obj['limit'] = limit
+    response_obj['count'] = records_count
+    
+    # Создаем URL на предыдущую страницу
+    if start == 1:
+        response_obj['previous'] = ''
+    else:
+        start_copy = max(1, start - limit) # Странный просчет последней страницы
+        limit_copy = start - 1
+        response_obj['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+        
+    # Создаем URL на следующую страницу
+    if start + limit > records_count:
+        response_obj['next'] = ''
+    else:
+        start_copy = start + limit
+        response_obj['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+        
+    # Отсеивание результатов запроса
+    response_obj['results'] = query_result[(start - 1):(start - 1 + limit)]
+
+    return response_obj
 
 # ------------------------------------------------------------
 # Пользователи
@@ -41,18 +75,27 @@ def pagination_of_list(query_result, url, start, limit):
 # Получение полного списка
 @API0.route('/users', methods=['GET'])
 def get_users():
+    
     try:
+        
+        all_records = request.args.get("all")
+        
         user_schema = cmsUsersSchema(many=True)
         users = cmsUsers.query.all()
         udata = user_schema.dump(users)
+        udata = udata.data
+        
+        if all_records is None:
+            udata = pagination_of_list(udata, '/API/v0/users', start=int(request.args.get('start', 1)), limit=int(request.args.get('limit', LIMIT)))
 
         response = Response(
-            response=json.dumps(udata.data),
+            response=json.dumps(udata),
             status=200,
             mimetype='application/json'
         )
         
     except:
+        
         response = server_error(request.args.get("dbg"))
         
     return response
@@ -109,7 +152,7 @@ def post_users():
             db.session.commit()
 
             response = Response(
-                response=json.dumps({'type':'success', 'text':'Успешно добавлен пользователь с id='+str(user.id)+'!', 'link':url_for('.get_user_by_id', uid=user.id)}),
+                response=json.dumps({'type':'success', 'text':'Успешно добавлен пользователь с id='+str(user.id)+'!', 'link':url_for('.get_user_by_id', uid=user.id, _external=True)}),
                 status=200,
                 mimetype='application/json'
             )
@@ -139,7 +182,7 @@ def update_users(uid):
             db.session.commit()
 
             response = Response(
-                response=json.dumps({'type':'success', 'text':'Успешно обновлен пользователь с id='+str(uid)+'!', 'link':url_for('.get_user_by_id', uid=uid)}),
+                response=json.dumps({'type':'success', 'text':'Успешно обновлен пользователь с id='+str(uid)+'!', 'link':url_for('.get_user_by_id', uid=uid, _external=True)}),
                 status=200,
                 mimetype='application/json'
             )
