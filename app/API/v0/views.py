@@ -33,10 +33,6 @@ def server_error(dbg=None):
 
 # Пагинация
 def pagination_of_list(query_result, url, start, limit):
-    print(query_result)
-    print(url)
-    print(start)
-    print(limit)
     
     records_count = len(query_result)
     
@@ -54,14 +50,14 @@ def pagination_of_list(query_result, url, start, limit):
     else:
         start_copy = max(1, start - limit) # Странный просчет последней страницы
         limit_copy = start - 1
-        response_obj['previous'] = url + '?start=%d&limit=%d' % (start_copy, limit_copy)
+        response_obj['previous'] = url_for('API0.get_users', start=start_copy, limit=limit_copy, _external=True)
         
     # Создаем URL на следующую страницу
     if start + limit > records_count:
         response_obj['next'] = ''
     else:
         start_copy = start + limit
-        response_obj['next'] = url + '?start=%d&limit=%d' % (start_copy, limit)
+        response_obj['next'] = url_for('API0.get_users', start=start_copy, limit=limit, _external=True)
         
     # Отсеивание результатов запроса
     response_obj['results'] = query_result[(start - 1):(start - 1 + limit)]
