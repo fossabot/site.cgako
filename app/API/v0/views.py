@@ -10,15 +10,35 @@ from app.models import cmsUsersSchema
 
 API0 = Blueprint('API0', __name__)
 
+# ------------------------------------------------------------
 # Функции
+# ------------------------------------------------------------
+
+# Вывод серверной ошибки с трейсом
+def server_error(dbg=None):
+    if dbg is not None:
+        text = traceback.format_exc()
+    else:
+        text = "Серверная ошибка!"
+    
+    response = Response(
+        response=json.dumps({'type':'error', 'text':text}),
+        status=500,
+        mimetype='application/json'
+    )
+    
+    return response
 
 # Пагинация
-
 def pagination_of_list(query_result, url, start, limit):
     
     return "OK"
 
+# ------------------------------------------------------------
 # Пользователи
+# ------------------------------------------------------------
+
+# Получение полного списка
 @API0.route('/users', methods=['GET'])
 def get_users():
     try:
@@ -33,20 +53,11 @@ def get_users():
         )
         
     except:
-        debug = request.args.get("dbg")
-        if debug is not None:
-            text = traceback.format_exc()
-        else:
-            text = "Серверная ошибка!"
-            
-        response = Response(
-            response=json.dumps({'type':'error', 'text':text}),
-            status=500,
-            mimetype='application/json'
-        )
-    
+        response = server_error(request.args.get("dbg"))
+        
     return response
     
+# Получение одного по номеру
 @API0.route('/users/<int:uid>', methods=['GET'])
 def get_user_by_id(uid):
 
@@ -62,20 +73,11 @@ def get_user_by_id(uid):
         )
         
     except:
-        debug = request.args.get("dbg")
-        if debug is not None:
-            text = traceback.format_exc()
-        else:
-            text = "Серверная ошибка!"
-            
-        response = Response(
-            response=json.dumps({'type':'error', 'text':text}),
-            status=500,
-            mimetype='application/json'
-        )
+        response = server_error(request.args.get("dbg"))
     
     return response
 
+# Вставка в БД
 @API0.route('/users', methods=['POST'])
 def post_users():
 
@@ -107,26 +109,17 @@ def post_users():
             db.session.commit()
 
             response = Response(
-                response=json.dumps({'type':'success', 'text':'Успешно добавлено!', 'link':url_for('.get_user_by_id', uid=user.id)}),
+                response=json.dumps({'type':'success', 'text':'Успешно добавлен пользователь с id='+str(user.id)+'!', 'link':url_for('.get_user_by_id', uid=user.id)}),
                 status=200,
                 mimetype='application/json'
             )
         
     except:
-        debug = request.args.get("dbg")
-        if debug is not None:
-            text = traceback.format_exc()
-        else:
-            text = "Серверная ошибка!"
-            
-        response = Response(
-            response=json.dumps({'type':'error', 'text':text}),
-            status=500,
-            mimetype='application/json'
-        )
+        response = server_error(request.args.get("dbg"))
     
     return response
-    
+
+# Изменение в БД
 @API0.route('/users/<int:uid>', methods=['PUT'])
 def update_users(uid):
     
@@ -152,20 +145,11 @@ def update_users(uid):
             )
         
     except:
-        debug = request.args.get("dbg")
-        if debug is not None:
-            text = traceback.format_exc()
-        else:
-            text = "Серверная ошибка!"
-            
-        response = Response(
-            response=json.dumps({'type':'error', 'text':text}),
-            status=500,
-            mimetype='application/json'
-        )
+        response = server_error(request.args.get("dbg"))
     
     return response
-    
+
+# Удаление из БД
 @API0.route('/users/<int:uid>', methods=['DELETE'])
 def delete_users(uid):
 
@@ -182,16 +166,10 @@ def delete_users(uid):
         )
         
     except:
-        debug = request.args.get("dbg")
-        if debug is not None:
-            text = traceback.format_exc()
-        else:
-            text = "Серверная ошибка!"
-            
-        response = Response(
-            response=json.dumps({'type':'error', 'text':text}),
-            status=500,
-            mimetype='application/json'
-        )
+        response = server_error(request.args.get("dbg"))
     
     return response
+
+# ------------------------------------------------------------
+# Новости
+# ------------------------------------------------------------
