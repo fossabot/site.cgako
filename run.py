@@ -1,7 +1,7 @@
 #! env/bin/python3.6
 # -*- coding: utf8 -*-
 
-"""Файл запуска приложения Flask"""
+"""Файл запуска приложения Flask."""
 
 from app import app
 

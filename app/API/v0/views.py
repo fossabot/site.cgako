@@ -1,14 +1,15 @@
 #! env/bin/python3.6
 # -*- coding: utf8 -*-
 
-"""Представления API версии 0. Содержит следующие представления: Пользователи, Новости"""
+"""Представления API версии 0. Содержит следующие представления: Пользователи,
+Новости"""
 
 import traceback
 
 from flask import json, Blueprint, request, Response, url_for, abort
 
 from app import db
-from app.models import cmsUsers, cmsUsersSchema
+from app.models import CmsUsers, CmsUsersSchema
 
 from config import LIMIT
 
@@ -18,8 +19,10 @@ API0 = Blueprint('API0', __name__)
 # Функции
 # ------------------------------------------------------------
 
+
 def server_error(dbg=None):
-    """Вывод серверной ошибки с трейсом. Параметр dbg отвечает за вывод в формате traceback."""
+    """Вывод серверной ошибки с трейсом. Параметр dbg отвечает за вывод
+    в формате traceback."""
 
     if dbg is not None:
         text = traceback.format_exc()
@@ -27,17 +30,18 @@ def server_error(dbg=None):
         text = "Серверная ошибка!"
 
     response = Response(
-        response=json.dumps({'type':'error', 'text':text}),
+        response=json.dumps({'type': 'error', 'text': text}),
         status=500,
         mimetype='application/json'
     )
 
     return response
 
-# Пагинация
+
 def pagination_of_list(query_result, url, start, limit):
-    """ Пагинация результатов запроса. Принимает параметры: результат запроса (json),
-    URL API для генерации ссылок, стартовая позиция, количество выводимых записей"""
+    """ Пагинация результатов запроса. Принимает параметры:
+    результат запроса (json), URL API для генерации ссылок, стартовая позиция,
+    количество выводимых записей"""
 
     records_count = len(query_result)
 
@@ -53,7 +57,7 @@ def pagination_of_list(query_result, url, start, limit):
     if start == 1:
         response_obj['previous'] = ''
     else:
-        start_copy = max(1, start - limit) # Странный просчет последней страницы
+        start_copy = max(1, start - limit)  # Странный просчет последней стр
         limit_copy = start - 1
         response_obj['previous'] = url_for('API0.get_users',
                                            start=start_copy,
@@ -75,9 +79,11 @@ def pagination_of_list(query_result, url, start, limit):
 
     return response_obj
 
+
 # ------------------------------------------------------------
 # Пользователи
 # ------------------------------------------------------------
+
 
 @API0.route('/users', methods=['GET'])
 def get_users():
@@ -87,8 +93,8 @@ def get_users():
 
         all_records = request.args.get("all")
 
-        user_schema = cmsUsersSchema(many=True)
-        users = cmsUsers.query.all()
+        user_schema = CmsUsersSchema(many=True)
+        users = CmsUsers.query.all()
         udata = user_schema.dump(users)
         udata = udata.data
 
@@ -96,7 +102,9 @@ def get_users():
             udata = pagination_of_list(udata,
                                        '/API/v0/users',
                                        start=int(request.args.get('start', 1)),
-                                       limit=int(request.args.get('limit', LIMIT)))
+                                       limit=int(request.args.get('limit',
+                                                                  LIMIT))
+                                       )
 
         response = Response(
             response=json.dumps(udata),
@@ -110,14 +118,15 @@ def get_users():
 
     return response
 
+
 @API0.route('/users/<int:uid>', methods=['GET'])
 def get_user_by_id(uid):
     """ Получение одного пользователя по id в json"""
 
     try:
 
-        user_schema = cmsUsersSchema()
-        user = cmsUsers.query.get(uid)
+        user_schema = CmsUsersSchema()
+        user = CmsUsers.query.get(uid)
         udata = user_schema.dump(user)
 
         response = Response(
@@ -132,6 +141,7 @@ def get_user_by_id(uid):
 
     return response
 
+
 @API0.route('/users', methods=['POST'])
 def post_users():
     """ Добавление записи пользователя в БД"""
@@ -140,20 +150,21 @@ def post_users():
 
         post_data = request.get_json()
 
-        check = cmsUsers.query.filter(
-            (cmsUsers.login == post_data['login'])|
-            (cmsUsers.email == post_data['email'])|
-            (cmsUsers.phone == post_data["phone"])).first()
+        check = CmsUsers.query.filter(
+            (CmsUsers.login == post_data['login']) |
+            (CmsUsers.email == post_data['email']) |
+            (CmsUsers.phone == post_data["phone"])).first()
 
         if check:
             response = Response(
-                response=json.dumps({'type':'error',
-                                     'text':'Пользователь с такими данными существует!'}),
+                response=json.dumps({'type': 'error',
+                                     'text': 'Пользователь с такими данными\
+                                     существует!'}),
                 status=422,
                 mimetype='application/json'
             )
         else:
-            user = cmsUsers(
+            user = CmsUsers(
                 login=post_data['login'],
                 password=post_data['password'],
                 name=post_data['name'],
@@ -169,11 +180,12 @@ def post_users():
             db.session.commit()
 
             response = Response(
-                response=json.dumps({'type':'success',
-                                     'text':'Успешно добавлен пользователь с id='+str(user.id)+'!',
-                                     'link':url_for('.get_user_by_id',
-                                                    uid=user.id,
-                                                    _external=True)}),
+                response=json.dumps({'type': 'success',
+                                     'text': 'Успешно добавлен пользователь\
+                                      с id='+str(user.id)+'!',
+                                     'link': url_for('.get_user_by_id',
+                                                     uid=user.id,
+                                                     _external=True)}),
                 status=200,
                 mimetype='application/json'
             )
@@ -183,6 +195,7 @@ def post_users():
         response = server_error(request.args.get("dbg"))
 
     return response
+
 
 @API0.route('/users/<int:uid>', methods=['PUT'])
 def update_users(uid):
@@ -192,26 +205,30 @@ def update_users(uid):
 
         update_data = request.get_json()
 
-        check = cmsUsers.query.filter(
-            (cmsUsers.login == update_data['login'])|
-            (cmsUsers.email == update_data['email'])|
-            (cmsUsers.phone == update_data["phone"])).first()
+        check = CmsUsers.query.filter(
+            (CmsUsers.login == update_data['login']) |
+            (CmsUsers.email == update_data['email']) |
+            (CmsUsers.phone == update_data["phone"])).first()
 
         if check.id != uid:
             response = Response(
-                response=json.dumps({'type':'error',
-                                     'text':'Пользователь с такими данными существует!'}),
+                response=json.dumps({'type': 'error',
+                                     'text': 'Пользователь с такими данными\
+                                     существует!'}),
                 status=422,
                 mimetype='application/json'
             )
         else:
-            cmsUsers.query.filter_by(id=uid).update(update_data)
+            CmsUsers.query.filter_by(id=uid).update(update_data)
             db.session.commit()
 
             response = Response(
-                response=json.dumps({'type':'success',
-                                     'text':'Успешно обновлен пользователь с id='+str(uid)+'!',
-                                     'link':url_for('.get_user_by_id', uid=uid, _external=True)}),
+                response=json.dumps({'type': 'success',
+                                     'text': 'Успешно обновлен пользователь \
+                                     с id='+str(uid)+'!',
+                                     'link': url_for('.get_user_by_id',
+                                                     uid=uid,
+                                                     _external=True)}),
                 status=200,
                 mimetype='application/json'
             )
@@ -222,19 +239,21 @@ def update_users(uid):
 
     return response
 
+
 @API0.route('/users/<int:uid>', methods=['DELETE'])
 def delete_users(uid):
     """ Удаление записи пользователя из БД"""
 
     try:
 
-        user = cmsUsers.query.get(uid)
+        user = CmsUsers.query.get(uid)
 
         db.session.delete(user)
         db.session.commit()
 
         response = Response(
-            response=json.dumps({'type':'success', 'text':'Успешно удалено!'}),
+            response=json.dumps({'type': 'success',
+                                 'text': 'Успешно удалено!'}),
             status=200,
             mimetype='application/json'
         )

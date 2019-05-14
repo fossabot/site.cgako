@@ -1,12 +1,13 @@
 #! env/bin/python3.6
 # -*- coding: utf8 -*-
 
-""" Модели данных БД """
+"""Модели данных БД."""
 
 from app import db, ma
 
-class cmsUsers(db.Model):
-    """ Модель данных пользователя """
+
+class CmsUsers(db.Model):
+    """Модель данных пользователя."""
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(20), unique=True)
@@ -24,31 +25,39 @@ class cmsUsers(db.Model):
 
     status = db.Column(db.SmallInteger)
 
-    # department_id = db.Column(db.Integer, db.ForeignKey("arhiv.department.id"))
+    # department_id = db.Column(db.Integer,
+    # db.ForeignKey("arhiv.department.id"))
     # post_id = db.Column(db.Integer, db.ForeignKey("arhiv.post.id"))
     # role_id = db.Column(db.Integer, db.ForeignKey("arhiv.role.id"))
 
-    # important_news = db.relationship('Important_news', backref = 'user',lazy = 'dynamic')
-    # history = db.relationship('History', backref = 'user_parent',lazy = 'dynamic')
-    # permission = db.relationship('Permission', backref = 'user',lazy = 'dynamic')
+    # important_news = db.relationship('Important_news',
+    # backref = 'user',lazy = 'dynamic')
+    # history = db.relationship('History', backref = 'user_parent',
+    # lazy = 'dynamic')
+    # permission = db.relationship('Permission', backref = 'user',
+    # lazy = 'dynamic')
     # news = db.relationship('News', backref = 'user',lazy = 'dynamic')
     # appeals = db.relationship('Appeals', backref = 'user',lazy = 'dynamic')
     # executor = db.relationship('Executor', backref = 'user',lazy = 'dynamic')
 
     # employee = db.relationship('Item',
-                                # backref = 'item_employee',
-                                # lazy = 'dynamic',
-                                # foreign_keys='Item.employee')
+    # backref='item_employee',
+    # lazy='dynamic',
+    # foreign_keys='Item.employee')
     # responsible = db.relationship('Item',
-                                    # backref = 'item_responsible',
-                                    # lazy = 'dynamic',
-                                    # foreign_keys='Item.responsible')
+    # backref='item_responsible',
+    # lazy='dynamic',
+    # foreign_keys='Item.responsible')
 
     def __repr__(self):
+        """Форматирование вывода экземпляра класса."""
         return 'Пользователь id:%i, имя:%r ' % (self.id, self.name)
 
-class cmsUsersSchema(ma.ModelSchema):
-    """ Marshmallow-схема для перегона модели в json формат """
+
+class CmsUsersSchema(ma.ModelSchema):
+    """Marshmallow-схема для перегона модели в json формат."""
+
     class Meta:
-        """ Мета модели, вносятся доп. параметры"""
-        model = cmsUsers
+        """Мета модели, вносятся доп. параметры."""
+
+        model = CmsUsers

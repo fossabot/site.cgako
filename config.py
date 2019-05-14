@@ -1,7 +1,7 @@
 #! env/bin/python3.6
 # -*- coding: utf8 -*-
 
-"""Конфигурационный файл бэкенда"""
+"""Конфигурационный файл бэкенда."""
 
 import os
 
@@ -16,8 +16,9 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 # Соединение с БД
 SQLALCHEMY_BASIC_URI = 'mysql+pymysql://cgako_administrator:tester@localhost/'
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://cgako_administrator:tester@localhost/cgako_site_db'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://cgako_administrator:tester@localhost/\
+cgako_site_db'
 SQLALCHEMY_TRACK_MODIFICATIONS = 'true'
 
 # Умолчания
-LIMIT = 20 # Количество записей в пагинированном json
+LIMIT = 20  # Количество записей в пагинированном json
