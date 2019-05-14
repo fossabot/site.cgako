@@ -1,10 +1,14 @@
 #! env/bin/python3.6
 # -*- coding: utf8 -*-
 
+""" Модели данных БД """
+
 from app import db, ma
 
 class cmsUsers(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    """ Модель данных пользователя """
+
+    id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(20), unique=True)
     password = db.Column(db.String(32))
     socials = db.Column(db.JSON)
@@ -30,15 +34,21 @@ class cmsUsers(db.Model):
     # news = db.relationship('News', backref = 'user',lazy = 'dynamic')
     # appeals = db.relationship('Appeals', backref = 'user',lazy = 'dynamic')
     # executor = db.relationship('Executor', backref = 'user',lazy = 'dynamic')
-    
-    # employee = db.relationship('Item', backref = 'item_employee',lazy = 'dynamic', foreign_keys='Item.employee')
-    # responsible = db.relationship('Item', backref = 'item_responsible',lazy = 'dynamic', foreign_keys='Item.responsible')
 
+    # employee = db.relationship('Item',
+                                # backref = 'item_employee',
+                                # lazy = 'dynamic',
+                                # foreign_keys='Item.employee')
+    # responsible = db.relationship('Item',
+                                    # backref = 'item_responsible',
+                                    # lazy = 'dynamic',
+                                    # foreign_keys='Item.responsible')
 
     def __repr__(self):
         return 'Пользователь id:%i, имя:%r ' % (self.id, self.name)
-        
-#Marshmallow схемы
+
 class cmsUsersSchema(ma.ModelSchema):
+    """ Marshmallow-схема для перегона модели в json формат """
     class Meta:
+        """ Мета модели, вносятся доп. параметры"""
         model = cmsUsers
