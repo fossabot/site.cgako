@@ -5,6 +5,7 @@
 Новости"""
 
 import traceback
+from urllib.parse import urljoin
 
 from flask import json, Blueprint, request, Response, url_for, abort
 
@@ -59,20 +60,18 @@ def pagination_of_list(query_result, url, start, limit):
     else:
         start_copy = max(1, start - limit)  # Странный просчет последней стр
         limit_copy = start - 1
-        response_obj['previous'] = url_for('API0.get_users',
-                                           start=start_copy,
-                                           limit=limit_copy,
-                                           _external=True)
+        response_obj['previous'] = urljoin(url,
+                                           '?start=%d&limit=%d'
+                                           % (start_copy, limit_copy))
 
     # Создаем URL на следующую страницу
     if start + limit > records_count:
         response_obj['next'] = ''
     else:
         start_copy = start + limit
-        response_obj['next'] = url_for('API0.get_users',
-                                       start=start_copy,
-                                       limit=limit,
-                                       _external=True)
+        response_obj['next'] = urljoin(url,
+                                       '?start=%d&limit=%d'
+                                       % (start_copy, limit))
 
     # Отсеивание результатов запроса
     response_obj['results'] = query_result[(start - 1):(start - 1 + limit)]
@@ -100,7 +99,8 @@ def get_users():
 
         if all_records is None:
             udata = pagination_of_list(udata,
-                                       '/API/v0/users',
+                                       url_for('API0.get_users',
+                                               _external=True),
                                        start=int(request.args.get('start', 1)),
                                        limit=int(request.args.get('limit',
                                                                   LIMIT))
