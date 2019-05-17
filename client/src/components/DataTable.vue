@@ -2,64 +2,65 @@
 
 <div class="container">
 
-    <div class="row">
-      <div class="col-sm-10">
-        <h2>Пользователи</h2>
-        <hr><br><br>
-        <button type="button" class="btn btn-success btn-sm">Добавить</button>
-        <br><br>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Фамилия И.О.</th>
-              <th scope="col">Фотокарточка</th>
-              <th scope="col">Логин</th>
-              <th scope="col">Email</th>
-              <th scope="col">Телефон</th>
-              <th scope="col">Последний логин</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in tableData" v-bind:key="item.id">
-              <!-- eslint-disable-next-line -->
-              <td v-bind:title="item.surname+' '+item.name+' '+item.patronymic">{{item.surname}} {{item.name.charAt(0)}}.{{item.patronymic.charAt(0)}}.</td>
-              <td>{{item.photo}}</td>
-              <td>{{item.login}}</td>
-              <td>{{item.email}}</td>
-              <td>{{item.phone}}</td>
-              <td>{{item.last_login}}</td>
-              <td>
-                <button type="button" class="btn btn-warning btn-sm w-100">Изменить</button>
-                <button type="button" class="btn btn-danger btn-sm w-100">Удалить</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="row pb-3">
+      <h2>Пользователи</h2><hr>
     </div>
 
-    <b-modal ref="addBookModal" id="book-modal" title="Add a new book" hide-footer>
-      <b-form @submit="onSubmit" @reset="onReset" class="w-100">
-      <b-form-group id="form-title-group" label="Title:" label-for="form-title-input">
-          <!-- eslint-disable-next-line -->
-          <b-form-input id="form-title-input" type="text" v-model="addBookForm.title" required placeholder="Enter title">
-          </b-form-input>
-        </b-form-group>
-        <b-form-group id="form-author-group" label="Author:" label-for="form-author-input">
+    <div class="row pb-3">
+      <button type="button" title="Создать запись" class="btn btn-success btn-sm">
+        <font-awesome-icon icon="plus" fixed-width />
+      </button>
+    </div>
+
+    <div class="row pb-3">
+      <table class="table table-hover table-responsive">
+        <thead>
+          <tr>
+            <th><input type="checkbox" v-model="selectAll" @click="select"></th>
+            <th></th>
+            <th scope="col">Пользователь</th>
+            <th scope="col">Роль</th>
+            <th scope="col">Фотокарточка</th>
+            <th scope="col">Cоц. сети</th>
+            <th scope="col">Последний логин</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in tableData" v-bind:key="item.id">
+            <td><input type="checkbox" :value="item.id" v-model="selected"></td>
+            <td class="column">
+              <font-awesome-icon icon="shield-alt" fixed-width title="Статус учетной записи" />
+              <font-awesome-icon icon="power-off" fixed-width title="Отключить учетную запись" />
+            </td>
             <!-- eslint-disable-next-line -->
-            <b-form-input id="form-author-input" type="text" v-model="addBookForm.author" required placeholder="Enter author">
-            </b-form-input>
-          </b-form-group>
-        <b-form-group id="form-read-group">
-          <b-form-checkbox-group v-model="addBookForm.read" id="form-checks">
-            <b-form-checkbox value="true">Read?</b-form-checkbox>
-          </b-form-checkbox-group>
-        </b-form-group>
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Reset</b-button>
-      </b-form>
-    </b-modal>
+            <td v-bind:title="item.surname+' '+item.name+' '+item.patronymic">{{item.surname}} {{item.name.charAt(0)}}.{{item.patronymic.charAt(0)}}.<br> {{item.login}}</td>
+            <td>Администратор</td>
+            <td>{{item.photo}}</td>
+            <td>
+              <font-awesome-icon :icon="['fab', 'vk']" fixed-width />
+              <font-awesome-icon :icon="['fab', 'odnoklassniki']" fixed-width />
+              <font-awesome-icon :icon="['fab', 'yandex']" fixed-width />
+              <font-awesome-icon :icon="['fab', 'google']" fixed-width />
+            </td>
+            <td v-bind:title="item.last_login | moment('dddd, MMMM Do YYYY, HH:mm:ss a')">
+              {{item.last_login | moment("from")}}
+            </td>
+            <td>
+              <button type="button" title="Изменить запись" class="btn btn-warning btn-sm m-1">
+                <font-awesome-icon icon="pencil-alt" fixed-width />
+              </button>
+              <button type="button" title="Удалить запись" class="btn btn-danger btn-sm m-1">
+                <font-awesome-icon icon="trash" fixed-width />
+              </button>
+              <button type="button" title="Контактная информация" class="btn btn-info btn-sm m-1">
+                <font-awesome-icon icon="info" fixed-width />
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
   </div>
 
@@ -73,6 +74,8 @@ export default {
   data() {
     return {
       tableData: [],
+      selected: [],
+      selectAll: false,
       addBookForm: {
         title: '',
         author: '',
@@ -91,6 +94,14 @@ export default {
           // eslint-disable-next-line
           console.error(error);
         });
+    },
+    select() {
+      this.selected = [];
+      if (!this.selectAll) {
+        for (let i = 0; i < this.tableData.length; i += 1) {
+          this.selected.push(this.tableData[i].id);
+        }
+      }
     },
   },
   created() {

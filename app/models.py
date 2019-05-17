@@ -3,7 +3,7 @@
 
 """Модели данных БД."""
 
-from app import db, ma
+from app import bcrypt, db, ma
 
 
 class CmsUsers(db.Model):
@@ -11,12 +11,12 @@ class CmsUsers(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(20), unique=True)
-    password = db.Column(db.String(32))
-    socials = db.Column(db.JSON)
+    password = db.Column(db.String(60))
+    socials = db.Column(db.JSON(none_as_null=True))
     photo = db.Column(db.String(50))
-    name = db.Column(db.String(15))
-    surname = db.Column(db.String(15))
-    patronymic = db.Column(db.String(15))
+    name = db.Column(db.String(20))
+    surname = db.Column(db.String(20))
+    patronymic = db.Column(db.String(20))
     email = db.Column(db.String(50), unique=True)
     phone = db.Column(db.String(18), unique=True)
 
@@ -49,9 +49,43 @@ class CmsUsers(db.Model):
     # lazy='dynamic',
     # foreign_keys='Item.responsible')
 
+    def __init__(self, login, password,
+                 name, surname, patronymic,
+                 email, phone, birth_date,
+                 last_login=None, status=None, socials=None, photo=None):
+        """Конструктор класса."""
+        self.login = login
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self.socials = None if socials is None else socials
+        self.photo = None if photo is None else photo
+        self.name = name
+        self.surname = surname
+        self.patronymic = patronymic
+        self.email = email
+        self.phone = phone
+        self.birth_date = birth_date
+        self.last_login = None if last_login is None else last_login
+        self.status = 1 if status is None else status
+
     def __repr__(self):
-        """Форматирование вывода экземпляра класса."""
+        """Форматирование представления экземпляра класса."""
         return 'Пользователь id:%i, имя:%r ' % (self.id, self.name)
+
+    @classmethod
+    def authenticate(cls, **kwargs):
+        """Функция аутентификации."""
+        login = kwargs.get('login')
+        password = kwargs.get('password')
+
+        # Улучшить проверку ошибок аутентификации
+        if not login or not password:
+            return None
+
+        user = cls.query.filter_by(login=login).first()
+        if not user or not bcrypt.check_password_hash(user.password, password):
+            return None
+
+        return user
 
 
 class CmsUsersSchema(ma.ModelSchema):

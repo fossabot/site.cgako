@@ -4,17 +4,75 @@
 """Представления API версии 0. Содержит следующие представления: Пользователи,
 Новости"""
 
+import jwt
+
 import traceback
+
+from datetime import datetime, timedelta
+
 from urllib.parse import urljoin
 
-from flask import json, Blueprint, request, Response, url_for, abort
+from flask import current_app, json, Blueprint, \
+    request, Response, url_for, abort
+
+from functools import wraps
 
 from app import db
 from app.models import CmsUsers, CmsUsersSchema
 
-from config import LIMIT
-
 API0 = Blueprint('API0', __name__)
+
+# ------------------------------------------------------------
+# Декораторы
+# ------------------------------------------------------------
+
+
+def token_required(f):
+    @wraps(f)
+    def _verify(*args, **kwargs):
+        auth_headers = request.headers.get('Authorization', '').split()
+
+        invalid_msg = {'type': 'error',
+                       'text': 'Некорректный токен. Требуется регистрация или переданы \
+неверные аутентификационные данные.',
+                       'authenticated': False}
+        expired_msg = {'type': 'error',
+                       'text': 'Токен просрочен. Аутентифицируйтесь заново.',
+                       'authenticated': False}
+
+        if len(auth_headers) != 2:
+            response = Response(
+                response=json.dumps(invalid_msg),
+                status=401,
+                mimetype='application/json'
+            )
+            return response
+
+        try:
+            token = auth_headers[1]
+            data = jwt.decode(token, current_app.config['SECRET_KEY'])
+            user = CmsUsers.query.filter_by(login=data['sub']).first()
+            if not user:
+                raise RuntimeError('User not found')
+            return f(user, *args, **kwargs)
+        except jwt.ExpiredSignatureError:
+            response = Response(
+                response=json.dumps(expired_msg),
+                status=401,
+                mimetype='application/json'
+            )
+            return response
+        except (jwt.InvalidTokenError, Exception) as e:
+            print(e)
+            response = Response(
+                response=json.dumps(invalid_msg),
+                status=401,
+                mimetype='application/json'
+            )
+            return response
+
+    return _verify
+
 
 # ------------------------------------------------------------
 # Функции
@@ -80,12 +138,58 @@ def pagination_of_list(query_result, url, start, limit):
 
 
 # ------------------------------------------------------------
-# Пользователи
+# Логин
 # ------------------------------------------------------------
 
+@API0.route('/login', methods=['POST'])
+def login():
+    """Функция логина пользователя, создание JWT-токена"""
+
+    try:
+
+        login_data = request.get_json()
+
+        user = CmsUsers.authenticate(**login_data)
+
+        if not user:
+
+            response = Response(
+                response=json.dumps({'type': 'error',
+                                     'text': 'Ошибка аутентификации!',
+                                     'authenticated': False}),
+                status=401,
+                mimetype='application/json'
+            )
+
+            return response
+
+        token = jwt.encode({
+                            'sub': user.login,
+                            'iat': datetime.utcnow(),
+                            'exp': datetime.utcnow() + timedelta(minutes=30)
+                           },
+                           current_app.config['SECRET_KEY'])
+
+        response = Response(
+            response=json.dumps(token.decode('utf-8')),
+            status=200,
+            mimetype='application/json'
+        )
+
+    except Exception:
+
+        response = server_error(request.args.get("dbg"))
+
+    return response
+
+
+# ------------------------------------------------------------
+# Администрирование пользователей
+# ------------------------------------------------------------
 
 @API0.route('/users', methods=['GET'])
-def get_users():
+@token_required
+def get_users(current_user):
     """ Получение полного списка пользователей в json"""
 
     try:
@@ -93,18 +197,20 @@ def get_users():
         all_records = request.args.get("all")
 
         user_schema = CmsUsersSchema(many=True)
+
         users = CmsUsers.query.all()
         udata = user_schema.dump(users)
         udata = udata.data
 
         if all_records is None:
-            udata = pagination_of_list(udata,
-                                       url_for('API0.get_users',
-                                               _external=True),
-                                       start=int(request.args.get('start', 1)),
-                                       limit=int(request.args.get('limit',
-                                                                  LIMIT))
-                                       )
+            udata = pagination_of_list(
+                udata,
+                url_for('API0.get_users',
+                        _external=True),
+                start=int(request.args.get('start', 1)),
+                limit=int(request.args.get('limit',
+                                           current_app.config['LIMIT']))
+            )
 
         response = Response(
             response=json.dumps(udata),
@@ -120,7 +226,8 @@ def get_users():
 
 
 @API0.route('/users/<int:uid>', methods=['GET'])
-def get_user_by_id(uid):
+@token_required
+def get_user_by_id(current_user, uid):
     """ Получение одного пользователя по id в json"""
 
     try:
@@ -143,23 +250,24 @@ def get_user_by_id(uid):
 
 
 @API0.route('/users', methods=['POST'])
-def post_users():
+@token_required
+def post_users(current_user):
     """ Добавление записи пользователя в БД"""
 
     try:
 
         post_data = request.get_json()
 
-        check = CmsUsers.query.filter(
+        exist = CmsUsers.query.filter(
             (CmsUsers.login == post_data['login']) |
             (CmsUsers.email == post_data['email']) |
             (CmsUsers.phone == post_data["phone"])).first()
 
-        if check:
+        if exist:
             response = Response(
                 response=json.dumps({'type': 'error',
-                                     'text': 'Пользователь с такими данными\
-                                     существует!'}),
+                                     'text': 'Пользователь с такими данными \
+существует!'}),
                 status=422,
                 mimetype='application/json'
             )
@@ -172,8 +280,7 @@ def post_users():
                 patronymic=post_data['patronymic'],
                 birth_date=post_data['birth_date'],
                 email=post_data['email'],
-                phone=post_data["phone"],
-                status=post_data["status"]
+                phone=post_data["phone"]
             )
 
             db.session.add(user)
@@ -181,8 +288,8 @@ def post_users():
 
             response = Response(
                 response=json.dumps({'type': 'success',
-                                     'text': 'Успешно добавлен пользователь\
-                                      с id='+str(user.id)+'!',
+                                     'text': 'Успешно добавлен пользователь \
+с id='+str(user.id)+'!',
                                      'link': url_for('.get_user_by_id',
                                                      uid=user.id,
                                                      _external=True)}),
@@ -198,7 +305,8 @@ def post_users():
 
 
 @API0.route('/users/<int:uid>', methods=['PUT'])
-def update_users(uid):
+@token_required
+def update_users(current_user, uid):
     """ Изменение записи пользователя в БД"""
 
     try:
@@ -213,8 +321,8 @@ def update_users(uid):
         if check.id != uid:
             response = Response(
                 response=json.dumps({'type': 'error',
-                                     'text': 'Пользователь с такими данными\
-                                     существует!'}),
+                                     'text': 'Пользователь с такими данными \
+существует!'}),
                 status=422,
                 mimetype='application/json'
             )
@@ -225,7 +333,7 @@ def update_users(uid):
             response = Response(
                 response=json.dumps({'type': 'success',
                                      'text': 'Успешно обновлен пользователь \
-                                     с id='+str(uid)+'!',
+с id='+str(uid)+'!',
                                      'link': url_for('.get_user_by_id',
                                                      uid=uid,
                                                      _external=True)}),
@@ -241,7 +349,8 @@ def update_users(uid):
 
 
 @API0.route('/users/<int:uid>', methods=['DELETE'])
-def delete_users(uid):
+@token_required
+def delete_users(current_user, uid):
     """ Удаление записи пользователя из БД"""
 
     try:

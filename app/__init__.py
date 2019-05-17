@@ -9,6 +9,8 @@
 
 from flask import Flask
 
+from flask_bcrypt import Bcrypt
+
 from flask_cors import CORS
 
 from flask_marshmallow import Marshmallow
@@ -23,6 +25,7 @@ app.config.from_object('config')
 cors = CORS(app)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+bcrypt = Bcrypt(app)
 
 from app.API.v0.views import API0
 # from app.API.v0_1.views import API01 as api_v0_1
