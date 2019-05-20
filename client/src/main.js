@@ -7,7 +7,8 @@ import BootstrapVue from 'bootstrap-vue';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-  faTrash, faPencilAlt, faInfo, faPlus, faPowerOff, faShieldAlt,
+  faTrash, faPencilAlt, faInfo, faPlus, faPowerOff, faShieldAlt, faUser, faLock,
+  faExclamationTriangle, faSignInAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faVk, faYandex, faOdnoklassniki, faGoogle,
@@ -19,7 +20,8 @@ import App from './App';
 import router from './router';
 
 library.add(faTrash, faPencilAlt, faInfo, faPlus, faPowerOff,
-  faShieldAlt, faVk, faYandex, faOdnoklassniki, faGoogle);
+  faShieldAlt, faVk, faYandex, faOdnoklassniki, faGoogle, faUser, faLock,
+  faExclamationTriangle, faSignInAlt);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;

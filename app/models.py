@@ -77,15 +77,17 @@ class CmsUsers(db.Model):
         login = kwargs.get('login')
         password = kwargs.get('password')
 
-        # Улучшить проверку ошибок аутентификации
         if not login or not password:
-            return None
+            return (None, 'Не переданы данные для аутентификации пользователя!')
 
-        user = cls.query.filter_by(login=login).first()
-        if not user or not bcrypt.check_password_hash(user.password, password):
-            return None
+        user = cls.query.filter((cls.login == login) | (cls.email == login)).first()
 
-        return user
+        if not user:
+            return (None, 'Пользователь не найден!', 'username')
+        elif not bcrypt.check_password_hash(user.password, password):
+            return (None, 'Неверный пароль!', 'password')
+
+        return (user, 'Успешно!')
 
 
 class CmsUsersSchema(ma.ModelSchema):

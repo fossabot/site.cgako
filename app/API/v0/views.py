@@ -151,11 +151,12 @@ def login():
 
         user = CmsUsers.authenticate(**login_data)
 
-        if not user:
+        if not user[0]:
 
             response = Response(
                 response=json.dumps({'type': 'error',
-                                     'text': 'Ошибка аутентификации!',
+                                     'text': user[1],
+                                     'field': user[2],
                                      'authenticated': False}),
                 status=401,
                 mimetype='application/json'
@@ -164,7 +165,7 @@ def login():
             return response
 
         token = jwt.encode({
-                            'sub': user.login,
+                            'sub': user[0].login,
                             'iat': datetime.utcnow(),
                             'exp': datetime.utcnow() + timedelta(minutes=30)
                            },

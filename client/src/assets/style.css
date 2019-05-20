@@ -3,3 +3,209 @@
  * Copyright 2019 The Bootstrap Authors
  * Licensed under Apache License Version 2.0 (https://github.com/Goomba41/site.cgako/blob/master/LICENSE)
  */
+
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400,700&subset=cyrillic');
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap');
+
+.login-theme {
+    position: absolute;
+    top: 0;
+    left: 0;
+    content: "";
+    z-index: 0;
+    background: linear-gradient(180deg, #0B4FA6 50%, #FFFFFF 50%);
+}
+
+.fill-height {
+    height:100vh;
+}
+
+.form-box {
+    display: block;
+    position: relative;
+    background-color: #fff;
+    border-color: #fff;
+    color: rgba(0,0,0,.87);
+    border-radius: 2px;
+    text-decoration: none;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12)!important;
+}
+
+.text-primary-color {
+    color: #0B4FA6 !important;
+    caret-color: #0B4FA6 !important;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 100;
+}
+
+h3 {
+    font-size: 1rem;
+    font-weight: 100;
+}
+
+.notation, .field-desc {
+    font-size: 0.75rem;
+    font-weight: 300;
+    font-style: italic;
+}
+
+.flex {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+/*
+---------------------------- Кнопки логина -----------------------------
+*/
+
+/*
+---------------------------- ВК логин -----------------------------
+*/
+
+.btn-outline-vk {
+  color: #4C75A3;
+  border-color: #4C75A3;
+}
+
+.btn-outline-vk:hover {
+  color: #fff;
+  background-color: #4C75A3;
+  border-color: #4C75A3;
+}
+
+.btn-outline-vk:focus, .btn-outline-vk.focus {
+  box-shadow: 0 0 0 0.2rem rgba(76, 117, 163, 0.5);
+}
+
+.btn-outline-vk.disabled, .btn-outline-vk:disabled {
+  color: #4C75A3;
+  background-color: transparent;
+}
+
+.btn-outline-vk:not(:disabled):not(.disabled):active, .btn-outline-vk:not(:disabled):not(.disabled).active,
+.show > .btn-outline-vk.dropdown-toggle {
+  color: #fff;
+  background-color: #4C75A3;
+  border-color: #4C75A3;
+}
+
+.btn-outline-vk:not(:disabled):not(.disabled):active:focus, .btn-outline-vk:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-vk.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(76, 117, 163, 0.5);
+}
+
+/*
+---------------------------- Одноклассники логин -----------------------------
+*/
+
+.btn-outline-ok {
+  color: #ED812B;
+  border-color: #ED812B;
+}
+
+.btn-outline-ok:hover {
+  color: #fff;
+  background-color: #ED812B;
+  border-color: #ED812B;
+}
+
+.btn-outline-ok:focus, .btn-outline-ok.focus {
+  box-shadow: 0 0 0 0.2rem rgba(237, 129, 43, 0.5);
+}
+
+.btn-outline-ok.disabled, .btn-outline-ok:disabled {
+  color: #ED812B;
+  background-color: transparent;
+}
+
+.btn-outline-ok:not(:disabled):not(.disabled):active, .btn-outline-ok:not(:disabled):not(.disabled).active,
+.show > .btn-outline-ok.dropdown-toggle {
+  color: #fff;
+  background-color: #ED812B;
+  border-color: #ED812B;
+}
+
+.btn-outline-ok:not(:disabled):not(.disabled):active:focus, .btn-outline-ok:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-ok.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(237, 129, 43, 0.5);
+}
+
+/*
+---------------------------- Яндекс логин -----------------------------
+*/
+
+.btn-outline-yandex {
+  color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn-outline-yandex:hover {
+  color: #fff;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn-outline-yandex:focus, .btn-outline-yandex.focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.5);
+}
+
+.btn-outline-yandex.disabled, .btn-outline-yandex:disabled {
+  color: #FF0000;
+  background-color: transparent;
+}
+
+.btn-outline-yandex:not(:disabled):not(.disabled):active, .btn-outline-yandex:not(:disabled):not(.disabled).active,
+.show > .btn-outline-yandex.dropdown-toggle {
+  color: #fff;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn-outline-yandex:not(:disabled):not(.disabled):active:focus, .btn-outline-yandex:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-yandex.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.5);
+}
+
+/*
+---------------------------- Google логин -----------------------------
+*/
+
+.btn-outline-google {
+  color: #DD4B39;
+  border-color: #DD4B39;
+}
+
+.btn-outline-google:hover {
+  color: #fff;
+  background-color: #DD4B39;
+  border-color: #DD4B39;
+}
+
+.btn-outline-google:focus, .btn-outline-google.focus {
+  box-shadow: 0 0 0 0.2rem rgba(221, 75, 57, 0.5);
+}
+
+.btn-outline-google.disabled, .btn-outline-google:disabled {
+  color: #DD4B39;
+  background-color: transparent;
+}
+
+.btn-outline-google:not(:disabled):not(.disabled):active, .btn-outline-google:not(:disabled):not(.disabled).active,
+.show > .btn-outline-google.dropdown-toggle {
+  color: #fff;
+  background-color: #DD4B39;
+  border-color: #DD4B39;
+}
+
+.btn-outline-google:not(:disabled):not(.disabled):active:focus, .btn-outline-google:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-google.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(221, 75, 57, 0.5);
+}

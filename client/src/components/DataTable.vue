@@ -85,8 +85,7 @@ export default {
   },
   methods: {
     getData() {
-      const path = 'http://192.168.0.96:5000/API/v0/users';
-      axios.get(path)
+      axios.get('/api/users')
         .then((res) => {
           this.tableData = res.data.results;
         })
