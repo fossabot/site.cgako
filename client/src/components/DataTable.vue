@@ -27,24 +27,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in tableData" v-bind:key="item.id">
-            <td><input type="checkbox" :value="item.id" v-model="selected"></td>
+          <tr v-for="user in users.results" v-bind:key="user.id">
+            <td><input type="checkbox" :value="user.id" v-model="selected"></td>
             <td class="column">
               <font-awesome-icon icon="shield-alt" fixed-width title="Статус учетной записи" />
               <font-awesome-icon icon="power-off" fixed-width title="Отключить учетную запись" />
             </td>
             <!-- eslint-disable-next-line -->
-            <td v-bind:title="item.surname+' '+item.name+' '+item.patronymic">{{item.surname}} {{item.name.charAt(0)}}.{{item.patronymic.charAt(0)}}.<br> {{item.login}}</td>
+            <td v-bind:title="user.surname+' '+user.name+' '+user.patronymic">{{user.surname}} {{user.name.charAt(0)}}.{{user.patronymic.charAt(0)}}.<br> {{user.login}}</td>
             <td>Администратор</td>
-            <td>{{item.photo}}</td>
+            <td>{{user.photo}}</td>
             <td>
               <font-awesome-icon :icon="['fab', 'vk']" fixed-width />
               <font-awesome-icon :icon="['fab', 'odnoklassniki']" fixed-width />
               <font-awesome-icon :icon="['fab', 'yandex']" fixed-width />
               <font-awesome-icon :icon="['fab', 'google']" fixed-width />
             </td>
-            <td v-bind:title="item.last_login | moment('dddd, MMMM Do YYYY, HH:mm:ss a')">
-              {{item.last_login | moment("from")}}
+            <td v-bind:title="user.last_login | moment('dddd, MMMM Do YYYY, HH:mm:ss a')">
+              {{user.last_login | moment("from")}}
             </td>
             <td>
               <button type="button" title="Изменить запись" class="btn btn-warning btn-sm m-1">
@@ -61,50 +61,36 @@
         </tbody>
       </table>
     </div>
-
   </div>
 
 </template>
 
 <script>
-import axios from 'axios';
+import { mapState } from 'vuex';
 
 export default {
   name: 'DataTable',
   data() {
     return {
-      tableData: [],
       selected: [],
       selectAll: false,
-      addBookForm: {
-        title: '',
-        author: '',
-        read: [],
-      },
     };
   },
+  computed: mapState({
+    users: state => state.users,
+  }),
+  beforeMount() {
+    this.$store.dispatch('loadUsers');
+  },
   methods: {
-    getData() {
-      axios.get('/api/users')
-        .then((res) => {
-          this.tableData = res.data.results;
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-        });
-    },
     select() {
       this.selected = [];
       if (!this.selectAll) {
-        for (let i = 0; i < this.tableData.length; i += 1) {
-          this.selected.push(this.tableData[i].id);
+        for (let i = 0; i < this.users.results.length; i += 1) {
+          this.selected.push(this.users.results[i].id);
         }
       }
     },
-  },
-  created() {
-    this.getData();
   },
 };
 </script>

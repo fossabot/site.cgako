@@ -78,7 +78,7 @@ class CmsUsers(db.Model):
         password = kwargs.get('password')
 
         if not login or not password:
-            return (None, 'Не переданы данные для аутентификации пользователя!')
+            return (None, 'Не переданы данные для аутентификации пользователя!', 'empty')
 
         user = cls.query.filter((cls.login == login) | (cls.email == login)).first()
 

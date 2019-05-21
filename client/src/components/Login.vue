@@ -14,7 +14,7 @@
                 </div>
 
                 <div class="row justify-content-center align-items-center text-center mx-auto p-3">
-                    <form v-on:submit.prevent="login" class="w-100">
+                    <form class="w-100" v-on:submit.prevent="authenticate">
 
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
@@ -65,7 +65,8 @@
                             class="mr-3 btn btn-outline-google">
                                 <font-awesome-icon :icon="['fab', 'google']" fixed-width />
                             </button>
-                            <button type="submit" title="Войти по логину / паролю"
+                            <button type="submit" @click="authenticate"
+                            title="Войти по логину / паролю"
                             class="ml-auto btn btn-primary" :disabled="disableButton">
                             <font-awesome-icon :icon="['fa', 'sign-in-alt']" fixed-width /></button>
                         </div>
@@ -89,8 +90,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   name: 'Login',
   data() {
@@ -102,29 +101,9 @@ export default {
     };
   },
   methods: {
-    login() {
-      axios.post('/api/login', {
-        login: this.username,
-        password: this.password,
-      })
-        .then((res) => {
-          localStorage.setItem('usertoken', res.data);
-          this.username = '';
-          this.password = '';
-          this.$router.push({ name: 'UsersDataTable' });
-        })
-        .catch((error) => {
-          // eslint-disable-next-line
-          console.error(error);
-          this.userError = false;
-          this.passwordError = false;
-          if (error.response.data.field === 'username') {
-            this.userError = true;
-          }
-          if (error.response.data.field === 'password') {
-            this.passwordError = true;
-          }
-        });
+    authenticate() {
+      this.$store.dispatch('login', { login: this.username, password: this.password })
+        .then(() => this.$router.push('/dashboard'));
     },
   },
   computed: {

@@ -150,6 +150,7 @@ def login():
         login_data = request.get_json()
 
         user = CmsUsers.authenticate(**login_data)
+        print(user)
 
         if not user[0]:
 
@@ -195,23 +196,20 @@ def get_users(current_user):
 
     try:
 
-        all_records = request.args.get("all")
-
         user_schema = CmsUsersSchema(many=True)
 
         users = CmsUsers.query.all()
         udata = user_schema.dump(users)
         udata = udata.data
 
-        if all_records is None:
-            udata = pagination_of_list(
-                udata,
-                url_for('API0.get_users',
-                        _external=True),
-                start=int(request.args.get('start', 1)),
-                limit=int(request.args.get('limit',
-                                           current_app.config['LIMIT']))
-            )
+        udata = pagination_of_list(
+            udata,
+            url_for('API0.get_users',
+                    _external=True),
+            start=int(request.args.get('start', 1)),
+            limit=int(request.args.get('limit',
+                                       current_app.config['LIMIT']))
+        )
 
         response = Response(
             response=json.dumps(udata),
