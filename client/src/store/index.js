@@ -8,13 +8,14 @@ Vue.use(Vuex);
 // Источник данных
 const state = {
   users: [],
-  jwt: '',
+  jwt: localStorage.getItem('token') || '',
 };
 
 // Асинхронные операции AJAX
 const actions = {
   loadUsers(context) {
-    return axios.get('/api/users', { headers: { Authorization: `Bearer: ${context.state.jwt.token}` } })
+    console.log(context.state.jwt);
+    return axios.get('/api/users', { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
       .then((response) => {
         context.commit('setUsers', { users: response.data });
       })
@@ -47,7 +48,6 @@ const mutations = {
 // Переиспользуемые "получатели" данных
 const getters = {
   isAuthenticated(state) {
-    console.log(state.jwt);
     return isValidJwt(state.jwt);
   },
 };

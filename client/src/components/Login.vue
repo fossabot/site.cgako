@@ -103,7 +103,7 @@ export default {
   methods: {
     authenticate() {
       this.$store.dispatch('login', { login: this.username, password: this.password })
-        .then(() => this.$router.push('/dashboard'));
+        .then(() => this.$router.push('/users'));
     },
   },
   computed: {

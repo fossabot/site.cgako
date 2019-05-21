@@ -150,7 +150,6 @@ def login():
         login_data = request.get_json()
 
         user = CmsUsers.authenticate(**login_data)
-        print(user)
 
         if not user[0]:
 
