@@ -16,69 +16,66 @@
                 <div class="row justify-content-center align-items-center text-center mx-auto p-3">
                     <form class="w-100" v-on:submit.prevent="authenticate">
 
-                        <div class="input-group mb-3">
+                        <div class="input-group input-login mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="Username-addon">
-                                    <font-awesome-icon :icon="['fa', 'user']" fixed-width />
+                                <span class="input-group-text text-white bg-primary">
+                                    <font-awesome-icon :icon="['fa', 'user-shield']" fixed-width />
                                 </span>
                             </div>
-                            <input type="text" v-model="username" class="form-control"
-                            v-bind:class="{ 'is-invalid': userError }"
-                            placeholder="Имя пользователя или e-mail" aria-label="Username"
-                            aria-describedby="Username-addon" required autofocus>
-                            <div class="invalid-feedback text-left notation">
+
+                            <input v-model="username" v-bind:class="{ 'is-invalid': userError }"
+                            placeholder="Логин" aria-label="Username"
+                            type="text" class="form-control"
+                            required autofocus>
+                            <input v-model="password" v-bind:class="{ 'is-invalid': passwordError }"
+                            placeholder="Пароль" aria-label="Password"
+                            type="password" class="form-control"
+                            required>
+
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit"
+                                :disabled="disableButton">
+                                    <font-awesome-icon :icon="['fa', 'sign-in-alt']" fixed-width />
+                                </button>
+                            </div>
+
+                            <div class="invalid-feedback notation mt-2">
                                 <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
                                 size="1x" fixed-width /> Пользователь не найден!
                             </div>
                         </div>
 
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="Password-addon">
-                                    <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
-                                </span>
-                            </div>
-                            <input type="password" v-model="password" class="form-control"
-                            v-bind:class="{ 'is-invalid': passwordError }"
-                            placeholder="Пароль" aria-label="Password"
-                            aria-describedby="Password-addon" required>
-                            <div class="invalid-feedback text-left notation">
-                                <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
-                                size="1x" fixed-width /> Неверный пароль!
-                            </div>
-                        </div>
-
-                        <div class="flex p-3">
-                            <button type="button" title="Войти через ВКонтакте"
-                            class="mr-3 btn btn-outline-vk">
-                                <font-awesome-icon :icon="['fab', 'vk']" fixed-width />
-                            </button>
-                            <button type="button" title="Войти через Одноклассники"
-                            class="mr-3 btn btn-outline-ok">
-                                <font-awesome-icon :icon="['fab', 'odnoklassniki']" fixed-width />
-                            </button>
-                            <button type="button" title="Войти через Яндекс"
-                            class="mr-3 btn btn-outline-yandex">
-                                <font-awesome-icon :icon="['fab', 'yandex']" fixed-width />
-                            </button>
-                            <button type="button" title="Войти через Google"
-                            class="mr-3 btn btn-outline-google">
-                                <font-awesome-icon :icon="['fab', 'google']" fixed-width />
-                            </button>
-                            <button type="submit" @click="authenticate"
-                            title="Войти по логину / паролю"
-                            class="ml-auto btn btn-primary" :disabled="disableButton">
-                            <font-awesome-icon :icon="['fa', 'sign-in-alt']" fixed-width /></button>
-                        </div>
-
                     </form>
                 </div>
 
-                <div class="row p-3">
+                <div class="row justify-content-start align-items-start mx-auto p-3">
+                    <button type="button" title="Войти через ВКонтакте"
+                    class="mr-2 btn btn-outline-vk">
+                        <font-awesome-icon :icon="['fab', 'vk']" fixed-width />
+                    </button>
+                    <button type="button" title="Войти через Одноклассники"
+                    class="mr-2 btn btn-outline-ok">
+                        <font-awesome-icon :icon="['fab', 'odnoklassniki']" fixed-width />
+                    </button>
+                    <button type="button" title="Войти через Яндекс"
+                    class="mr-2 btn btn-outline-yandex">
+                        <font-awesome-icon :icon="['fab', 'yandex']" fixed-width />
+                    </button>
+                    <button type="button" title="Войти через Google"
+                    class="mr-2 btn btn-outline-google">
+                        <font-awesome-icon :icon="['fab', 'google']" fixed-width />
+                    </button>
+                    <button type="submit"
+                    title="Написать в техподдержку"
+                    class="ml-auto btn btn-outline-primary">
+                    <font-awesome-icon :icon="['fa', 'question']" fixed-width /></button>
+                </div>
+
+                <div class="row pl-3 pr-3 pt-3">
                     <span class="text-danger notation">
                         <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
                         size="1x" fixed-width />
-Уважаемые пользователи, будьте внимательны! Не сообщайте посторонним свои данные для входа!
+Уважаемые пользователи, <b>НИКОМУ</b> не сообщайте свои данные для входа!
                     </span>
                 </div>
 
@@ -103,7 +100,7 @@ export default {
   methods: {
     authenticate() {
       this.$store.dispatch('login', { login: this.username, password: this.password })
-        .then(() => this.$router.push('/users'));
+        .then(() => this.$router.push(this.$route.query.redirect || '/dashboard'));
     },
   },
   computed: {

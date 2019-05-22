@@ -1,3 +1,5 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
@@ -14,7 +16,6 @@ const state = {
 // Асинхронные операции AJAX
 const actions = {
   loadUsers(context) {
-    console.log(context.state.jwt);
     return axios.get('/api/users', { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
       .then((response) => {
         context.commit('setUsers', { users: response.data });
@@ -25,7 +26,7 @@ const actions = {
       });
   },
   login(context, userCreds) {
-    return axios.post('/api/login?dbg', userCreds)
+    return axios.post('/api/login', userCreds)
       .then(response => context.commit('setJwtToken', { jwt: response.data }))
       .catch((error) => {
         // eslint-disable-next-line

@@ -9,7 +9,7 @@ import BootstrapVue from 'bootstrap-vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faTrash, faPencilAlt, faInfo, faPlus, faPowerOff, faShieldAlt, faUser, faLock,
-  faExclamationTriangle, faSignInAlt, faCubes,
+  faExclamationTriangle, faSignInAlt, faCubes, faQuestion, faCopyright, faUserShield,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faVk, faYandex, faOdnoklassniki, faGoogle,
@@ -24,7 +24,7 @@ import store from './store';
 // Добавление иконок в библиотеку
 library.add(faTrash, faPencilAlt, faInfo, faPlus, faPowerOff,
   faShieldAlt, faVk, faYandex, faOdnoklassniki, faGoogle, faUser, faLock,
-  faExclamationTriangle, faSignInAlt, faCubes);
+  faExclamationTriangle, faSignInAlt, faCubes, faQuestion, faCopyright, faUserShield);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;

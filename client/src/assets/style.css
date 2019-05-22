@@ -67,6 +67,18 @@ h3 {
 */
 
 /*
+---------------------------- Кнопка входа -----------------------------
+*/
+
+.input-group > .input-group-append:not(:last-child) > .btn,
+.input-group > .input-group-append:not(:last-child) > .input-group-text,
+.input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle),
+.input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+}
+
+/*
 ---------------------------- ВК логин -----------------------------
 */
 
