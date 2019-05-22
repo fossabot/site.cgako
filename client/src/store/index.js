@@ -3,7 +3,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import { isValidJwt } from '@/utils';
+import { isValidJwt, EventBus } from '@/utils';
 
 Vue.use(Vuex);
 
@@ -15,6 +15,15 @@ const state = {
 
 // Асинхронные операции AJAX
 const actions = {
+  login(context, userCreds) {
+    return axios.post('/api/login', userCreds)
+      .then(response => context.commit('setJwtToken', { jwt: response.data }))
+      .catch((error) => {
+        // eslint-disable-next-line
+        console.error(error.response.data);
+        EventBus.$emit('failedAuthentication', error.response.data);
+      });
+  },
   loadUsers(context) {
     return axios.get('/api/users', { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
       .then((response) => {
@@ -23,14 +32,6 @@ const actions = {
       .catch((error) => {
         // eslint-disable-next-line
         console.error(error);
-      });
-  },
-  login(context, userCreds) {
-    return axios.post('/api/login', userCreds)
-      .then(response => context.commit('setJwtToken', { jwt: response.data }))
-      .catch((error) => {
-        // eslint-disable-next-line
-        console.error(error.response.data);
       });
   },
 };

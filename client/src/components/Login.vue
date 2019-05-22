@@ -41,7 +41,7 @@
 
                             <div class="invalid-feedback notation mt-2">
                                 <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
-                                size="1x" fixed-width /> Пользователь не найден!
+                                size="1x" fixed-width /> {{errorMsg}}
                             </div>
                         </div>
 
@@ -71,7 +71,7 @@
                     <font-awesome-icon :icon="['fa', 'question']" fixed-width /></button>
                 </div>
 
-                <div class="row pl-3 pr-3 pt-3">
+                <div class="row mx-auto pl-3 pr-3 pt-3 border-top">
                     <span class="text-danger notation">
                         <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
                         size="1x" fixed-width />
@@ -87,6 +87,8 @@
 </template>
 
 <script>
+import { EventBus } from '@/utils';
+
 export default {
   name: 'Login',
   data() {
@@ -95,6 +97,7 @@ export default {
       password: '',
       userError: false,
       passwordError: false,
+      errorMsg: '',
     };
   },
   methods: {
@@ -107,6 +110,26 @@ export default {
     disableButton() {
       return this.username.length === 0 || this.password.length === 0;
     },
+  },
+  mounted() {
+    EventBus.$on('failedAuthentication', (msg) => {
+      if (msg.field === "username") {
+        this.userError = true;
+        this.passwordError = false;
+      }
+      if (msg.field === "password") {
+        this.userError = false;
+        this.passwordError = true;
+      }
+      if (msg.field === "empty"){
+        this.userError = true;
+        this.passwordError = true;
+      }
+      this.errorMsg = msg.text;
+    });
+  },
+  beforeDestroy() {
+    EventBus.$off('failedAuthentication');
   },
 };
 </script>

@@ -52,14 +52,8 @@ h3 {
     font-style: italic;
 }
 
-.flex {
-    display: -ms-flexbox;
-    display: -webkit-box;
-    display: flex;
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-    margin-right: -15px;
-    margin-left: -15px;
+.border-top {
+    border-top: 1px solid #ced4da;
 }
 
 /*
