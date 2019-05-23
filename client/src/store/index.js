@@ -10,18 +10,21 @@ Vue.use(Vuex);
 // Источник данных
 const state = {
   users: [],
-  jwt: localStorage.getItem('token') || '',
+  authErrors: [],
+  jwt: localStorage.getItem('token') || '', // Загрузить токен из хранилища, или инициировать пустой, если нет в хранилище
 };
 
 // Асинхронные операции AJAX
 const actions = {
+  // Запрос токена с отсылкой авторизационных данных
   login(context, userCreds) {
     return axios.post('/api/login', userCreds)
-      .then(response => context.commit('setJwtToken', { jwt: response.data }))
+      .then((response) => { context.commit('setJwtToken', { jwt: response.data }); })
       .catch((error) => {
         EventBus.$emit('failedAuthentication', error.response.data);
       });
   },
+  // Загрузить пользователей
   loadUsers(context) {
     return axios.get('/api/users', { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
       .then((response) => {
@@ -36,10 +39,12 @@ const actions = {
 
 // Мутации данных
 const mutations = {
+  // Установка токена аутентификации
   setJwtToken(state, payload) {
     localStorage.token = payload.jwt;
     state.jwt = payload.jwt;
   },
+  // Установка списка пользователей
   setUsers(state, payload) {
     state.users = payload.users;
   },
@@ -47,6 +52,7 @@ const mutations = {
 
 // Переиспользуемые "получатели" данных
 const getters = {
+  // Проверка аутентикации путем верификации токена
   isAuthenticated(state) {
     return isValidJwt(state.jwt);
   },

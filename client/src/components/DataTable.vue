@@ -11,7 +11,7 @@
         <font-awesome-icon icon="plus" fixed-width />
       </button>
     </div>
-
+<a href="dashboard">Пользователи</a>
     <div class="row pb-3">
       <table class="table table-hover table-responsive">
         <thead>

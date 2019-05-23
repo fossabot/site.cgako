@@ -107,7 +107,7 @@ export default {
   methods: {
     authenticate() {
       this.$store.dispatch('login', { login: this.username, password: this.password })
-        .then(() => this.$router.push(this.$route.query.redirect || '/dashboard'));
+        .then(() => { this.$router.push(this.$route.query.redirect || '/dashboard'); });
     },
   },
   computed: {
@@ -116,6 +116,11 @@ export default {
     },
   },
   mounted() {
+    if (this.$route.query.tokenExpired) {
+      this.userError = true;
+      this.passwordError = true;
+      this.errorMsg = 'Токен доступа просрочен или поврежден, войдите заново!';
+    }
     EventBus.$on('failedAuthentication', (msg) => {
       if (msg.field === 'username') {
         this.userError = true;

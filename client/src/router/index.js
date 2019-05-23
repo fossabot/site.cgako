@@ -8,6 +8,7 @@ import store from '@/store';
 
 Vue.use(Router);
 
+// Объявление роутера с маршрутами
 const router = new Router({
   saveScrollPosition: true,
   routes: [
@@ -47,6 +48,9 @@ const router = new Router({
   mode: 'history',
 });
 
+// Перед каждым переходом проверять, требуется ли аутентификация для маршрута,
+// если да, то проверить статус аутентификации,
+// если не аутентифицирован, редирект на логин, иначе перейти по маршруту
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.getters.isAuthenticated) {
@@ -54,6 +58,7 @@ router.beforeEach((to, from, next) => {
         path: '/login',
         query: {
           redirect: to.fullPath,
+          tokenExpired: true,
         },
       });
     } else {
@@ -64,6 +69,7 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+// Перед загрузкой страницы старт прогресс-бара
 router.beforeResolve((to, from, next) => {
   if (to.name) {
     NProgress.start();
@@ -71,6 +77,7 @@ router.beforeResolve((to, from, next) => {
   next();
 });
 
+// После загрузки завершить отсчет прогресс-бара
 // eslint-disable-next-line
 router.afterEach((to, from) => {
   NProgress.done();
