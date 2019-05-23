@@ -109,6 +109,21 @@ export default {
       this.$store.dispatch('login', { login: this.username, password: this.password })
         .then(() => { this.$router.push(this.$route.query.redirect || '/dashboard'); });
     },
+    checkTokenExpiration() {
+      if (localStorage.getItem('token') !== null) {
+        const jwt = localStorage.getItem('token');
+        const data = JSON.parse(atob(jwt.split('.')[1]));
+        const exp = new Date(data.exp * 1000);
+        const now = new Date();
+        const expired = now > exp;
+        if (expired) {
+          localStorage.removeItem('token');
+          this.userError = true;
+          this.passwordError = true;
+          this.errorMsg = 'Токен доступа просрочен или поврежден, войдите заново!';
+        }
+      }
+    },
   },
   computed: {
     disableButton() {
@@ -116,11 +131,7 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.query.tokenExpired) {
-      this.userError = true;
-      this.passwordError = true;
-      this.errorMsg = 'Токен доступа просрочен или поврежден, войдите заново!';
-    }
+    this.checkTokenExpiration();
     EventBus.$on('failedAuthentication', (msg) => {
       if (msg.field === 'username') {
         this.userError = true;

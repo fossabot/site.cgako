@@ -16,6 +16,11 @@
     background: linear-gradient(180deg, #0B4FA6 50%, #FFFFFF 50%);
 }
 
+.UICountdown {
+    z-index: 9999;
+    position: absolute;
+}
+
 .fill-height {
     height:100vh;
 }
@@ -55,6 +60,13 @@ h3 {
 
 .border-top {
     border-top: 1px solid #ced4da;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 1s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
+    opacity: 0;
 }
 
 /*
@@ -100,7 +112,7 @@ h3 {
   text-transform: uppercase;
   background: repeating-linear-gradient(white, white 2px, #7AB4E2 2px, #7AB4E2 3px);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;   
+  -webkit-text-fill-color: transparent;
 }
 
 /*

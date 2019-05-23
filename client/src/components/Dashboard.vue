@@ -1,7 +1,7 @@
 <template>
-    <div class="container">
+    <div class="container-fluid fill-height">
         <navbar></navbar>
-        <main><a href="users">Пользователи</a></main>
+        <main><a href="users">Пользователи</a><input type="text"/></main>
     </div>
 </template>
 

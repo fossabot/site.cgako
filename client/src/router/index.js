@@ -13,6 +13,16 @@ const router = new Router({
   saveScrollPosition: true,
   routes: [
     {
+      path: '*',
+      component: Dashboard,
+      meta: {
+        requiresAuth: true,
+      },
+      beforeEnter(to, from, next) {
+        next('/dashboard');
+      },
+    },
+    {
       path: '/users',
       name: 'UsersDataTable',
       component: DataTable,
@@ -24,17 +34,6 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-      beforeEnter(to, from, next) {
-        if (store.getters.isAuthenticated) {
-          if (to.query.redirect) {
-            next(to.query.redirect);
-          } else {
-            next('/dashboard');
-          }
-        } else {
-          next();
-        }
-      },
     },
     {
       path: '/dashboard',
@@ -58,7 +57,6 @@ router.beforeEach((to, from, next) => {
         path: '/login',
         query: {
           redirect: to.fullPath,
-          tokenExpired: true,
         },
       });
     } else {
