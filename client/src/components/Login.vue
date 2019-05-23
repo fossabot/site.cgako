@@ -8,7 +8,7 @@
                 <div class="row justify-content-center align-items-center text-center mx-auto p-3">
                     <div class="col mx-auto">
                         <img src="../assets/logo-1.png" alt="ЦГАКО" width=70>
-                        <h1 class="text-primary-color mt-4 mb-0">Вход в CMS</h1>
+                        <h1 class="text-gradient mt-4 mb-0">Вход в CMS</h1>
                         <h3 class="text-primary-color mb-4">Панель управления сайтом ЦГАКО</h3>
                     </div>
                 </div>
@@ -65,10 +65,14 @@
                     class="mr-2 btn btn-outline-google">
                         <font-awesome-icon :icon="['fab', 'google']" fixed-width />
                     </button>
-                    <button type="submit"
-                    title="Написать в техподдержку"
+                    <a role="button"
+                    href="mailto:site.administrator@cgako.ru?
+subject=Проблемы%20со%20входом%20в%20систему.&amp;
+body=Описание%20проблемы:%0D%0A%0D%0A&amp;
+bcc=anton.borodawkin@yandex.ru"
+                    title="Написать в техподдержку" aria-disabled="true"
                     class="ml-auto btn btn-outline-primary">
-                    <font-awesome-icon :icon="['fa', 'question']" fixed-width /></button>
+                    <font-awesome-icon :icon="['fa', 'question']" fixed-width /></a>
                 </div>
 
                 <div class="row mx-auto pl-3 pr-3 pt-3 border-top">
@@ -113,15 +117,15 @@ export default {
   },
   mounted() {
     EventBus.$on('failedAuthentication', (msg) => {
-      if (msg.field === "username") {
+      if (msg.field === 'username') {
         this.userError = true;
         this.passwordError = false;
       }
-      if (msg.field === "password") {
+      if (msg.field === 'password') {
         this.userError = false;
         this.passwordError = true;
       }
-      if (msg.field === "empty"){
+      if (msg.field === 'empty') {
         this.userError = true;
         this.passwordError = true;
       }

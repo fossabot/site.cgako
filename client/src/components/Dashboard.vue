@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <navbar></navbar>
-        <main></main>
+        <main><a href="users">Пользователи</a></main>
     </div>
 </template>
 

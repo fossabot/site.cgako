@@ -19,8 +19,6 @@ const actions = {
     return axios.post('/api/login', userCreds)
       .then(response => context.commit('setJwtToken', { jwt: response.data }))
       .catch((error) => {
-        // eslint-disable-next-line
-        console.error(error.response.data);
         EventBus.$emit('failedAuthentication', error.response.data);
       });
   },

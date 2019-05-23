@@ -167,7 +167,7 @@ def login():
         token = jwt.encode({
                             'sub': user[0].login,
                             'iat': datetime.utcnow(),
-                            'exp': datetime.utcnow() + timedelta(minutes=30)
+                            'exp': datetime.utcnow() + timedelta(seconds=10)
                            },
                            current_app.config['SECRET_KEY'])
 

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import NProgress from 'nprogress';
 import DataTable from '@/components/DataTable';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
@@ -61,6 +62,18 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+});
+
+router.beforeResolve((to, from, next) => {
+  if (to.name) {
+    NProgress.start();
+  }
+  next();
+});
+
+// eslint-disable-next-line
+router.afterEach((to, from) => {
+  NProgress.done();
 });
 
 export default router;

@@ -39,6 +39,7 @@
 h1 {
     font-size: 3rem;
     font-weight: 100;
+    text-transform: uppercase;
 }
 
 h3 {
@@ -54,6 +55,86 @@ h3 {
 
 .border-top {
     border-top: 1px solid #ced4da;
+}
+
+/*
+---------------------------- Прогресс бар загрузки страницы -----------------------------
+*/
+
+#nprogress {
+  pointer-events: none;
+}
+
+#nprogress .bar {
+  background: #FD5E00;
+
+  position: fixed;
+  z-index: 1031;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: .2rem;
+  transition: width .2s;
+}
+
+/*
+---------------------------- Стили текста -----------------------------
+*/
+
+/*
+---------------------------- Текст с градиентом -----------------------------
+*/
+
+.text-gradient {
+    background: linear-gradient(180deg, #FDC700 33%, #0D61BC 66%, #0B4FA6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/*
+---------------------------- Текст в полоску -----------------------------
+*/
+
+.text-striped {
+  text-transform: uppercase;
+  background: repeating-linear-gradient(white, white 2px, #7AB4E2 2px, #7AB4E2 3px);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;   
+}
+
+/*
+---------------------------- Текст прозрачный на фоне -----------------------------
+*/
+
+.transparent-text {
+  background: #2E2F45;
+  color: white;
+  border-radius: 5px;
+  mix-blend-mode: multiply;
+}
+
+/*
+---------------------------- Текст с градиентом границ -----------------------------
+*/
+
+.text-gradient-border {
+  border: 1px solid;
+  border-image: linear-gradient(20deg, #f92056 38%, #00deff 65%);
+  border-image-slice: 1;
+}
+
+/*
+---------------------------- Текст с градиентом текста и границ -----------------------------
+*/
+
+.text-gradient-all {
+  background: linear-gradient(135deg, #12BCB0 20%, #FABE0E 70%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border: 3px solid transparent;
+  border-image: linear-gradient(135deg, #12BCB0 20%, #FABE0E 70%);
+  border-image-slice: 1;
 }
 
 /*
