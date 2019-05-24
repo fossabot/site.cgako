@@ -10,11 +10,12 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faTrash, faPencilAlt, faInfo, faPlus, faPowerOff, faShieldAlt, faUser, faLock,
   faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright, faUserShield,
+  faBars, faBell, faCog, faUserCircle, faCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import {
-  faVk, faYandex, faOdnoklassniki, faGoogle,
+  faVk, faYandex, faOdnoklassniki, faGoogle, faGithub, faTrello,
 } from '@fortawesome/free-brands-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome';
 
 import Vue from 'vue';
 import App from './App';
@@ -24,8 +25,12 @@ import store from './store';
 // Добавление иконок в библиотеку
 library.add(faTrash, faPencilAlt, faInfo, faPlus, faPowerOff,
   faShieldAlt, faVk, faYandex, faOdnoklassniki, faGoogle, faUser, faLock,
-  faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright, faUserShield);
+  faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright,
+  faUserShield, faBars, faGithub, faBell, faTrello, faCog, faUserCircle,
+  faCircle);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('font-awesome-layers', FontAwesomeLayers);
+Vue.component('font-awesome-layers-text', FontAwesomeLayersText);
 
 Vue.config.productionTip = false;
 

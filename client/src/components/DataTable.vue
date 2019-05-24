@@ -1,72 +1,76 @@
 <template>
-
-<div class="container">
-
-    <div class="row pb-3">
-      <h2>Пользователи</h2><hr>
-    </div>
-
-    <div class="row pb-3">
-      <button type="button" title="Создать запись" class="btn btn-success btn-sm">
-        <font-awesome-icon icon="plus" fixed-width />
-      </button>
-    </div>
-<a href="dashboard">Пользователи</a>
-    <div class="row pb-3">
-      <table class="table table-hover table-responsive">
-        <thead>
-          <tr>
-            <th><input type="checkbox" v-model="selectAll" @click="select"></th>
-            <th></th>
-            <th scope="col">Пользователь</th>
-            <th scope="col">Роль</th>
-            <th scope="col">Фотокарточка</th>
-            <th scope="col">Cоц. сети</th>
-            <th scope="col">Последний логин</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in users.results" v-bind:key="user.id">
-            <td><input type="checkbox" :value="user.id" v-model="selected"></td>
-            <td class="column">
-              <font-awesome-icon icon="shield-alt" fixed-width title="Статус учетной записи" />
-              <font-awesome-icon icon="power-off" fixed-width title="Отключить учетную запись" />
-            </td>
-            <!-- eslint-disable-next-line -->
-            <td v-bind:title="user.surname+' '+user.name+' '+user.patronymic">{{user.surname}} {{user.name.charAt(0)}}.{{user.patronymic.charAt(0)}}.<br> {{user.login}}</td>
-            <td>Администратор</td>
-            <td>{{user.photo}}</td>
-            <td>
-              <font-awesome-icon :icon="['fab', 'vk']" fixed-width />
-              <font-awesome-icon :icon="['fab', 'odnoklassniki']" fixed-width />
-              <font-awesome-icon :icon="['fab', 'yandex']" fixed-width />
-              <font-awesome-icon :icon="['fab', 'google']" fixed-width />
-            </td>
-            <td v-bind:title="user.last_login | moment('dddd, MMMM Do YYYY, HH:mm:ss a')">
-              {{user.last_login | moment("from")}}
-            </td>
-            <td>
-              <button type="button" title="Изменить запись" class="btn btn-warning btn-sm m-1">
-                <font-awesome-icon icon="pencil-alt" fixed-width />
-              </button>
-              <button type="button" title="Удалить запись" class="btn btn-danger btn-sm m-1">
-                <font-awesome-icon icon="trash" fixed-width />
-              </button>
-              <button type="button" title="Контактная информация" class="btn btn-info btn-sm m-1">
-                <font-awesome-icon icon="info" fixed-width />
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="container-fluid fill-height p-0">
+    <navbar></navbar>
+    <main class="container-fluid p-4">
+        <div class="row-fluid pb-3">
+          <a href="dashboard"><h2>Пользователи</h2></a><hr>
+        </div>
+        <div class="row-fluid pb-3">
+          <button type="button" title="Создать запись" class="btn btn-success btn-sm">
+            <font-awesome-icon icon="plus" fixed-width />
+          </button>
+        </div>
+        <div class="row-fluid pb-3">
+          <table class="table table-hover table-responsive">
+            <thead>
+              <tr>
+                <th><input type="checkbox" v-model="selectAll" @click="select"></th>
+                <th></th>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Роль</th>
+                <th scope="col">Фотокарточка</th>
+                <th scope="col">Cоц. сети</th>
+                <th scope="col">Последний логин</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in users.results" v-bind:key="user.id">
+                <td><input type="checkbox" :value="user.id" v-model="selected"></td>
+                <td class="column">
+                  <font-awesome-icon icon="shield-alt"
+                  fixed-width title="Статус учетной записи" />
+                  <font-awesome-icon icon="power-off"
+                  fixed-width title="Отключить учетную запись" />
+                </td>
+                <!-- eslint-disable-next-line -->
+                <td v-bind:title="user.surname+' '+user.name+' '+user.patronymic">{{user.surname}} {{user.name.charAt(0)}}.{{user.patronymic.charAt(0)}}.<br> {{user.login}}</td>
+                <td>Администратор</td>
+                <td>{{user.photo}}</td>
+                <td>
+                  <font-awesome-icon :icon="['fab', 'vk']" fixed-width />
+                  <font-awesome-icon :icon="['fab', 'odnoklassniki']" fixed-width />
+                  <font-awesome-icon :icon="['fab', 'yandex']" fixed-width />
+                  <font-awesome-icon :icon="['fab', 'google']" fixed-width />
+                </td>
+                <td v-bind:title="user.last_login | moment('dddd, MMMM Do YYYY, HH:mm:ss a')">
+                  {{user.last_login | moment("from")}}
+                </td>
+                <td>
+                  <button type="button" title="Изменить запись"
+                  class="btn btn-warning btn-sm m-1">
+                    <font-awesome-icon icon="pencil-alt" fixed-width />
+                  </button>
+                  <button type="button" title="Удалить запись"
+                  class="btn btn-danger btn-sm m-1">
+                    <font-awesome-icon icon="trash" fixed-width />
+                  </button>
+                  <button type="button" title="Контактная информация"
+                  class="btn btn-info btn-sm m-1">
+                    <font-awesome-icon icon="info" fixed-width />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    </main>
   </div>
-
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import Navbar from './Navbar';
 
 export default {
   name: 'DataTable',
@@ -76,6 +80,7 @@ export default {
       selectAll: false,
     };
   },
+  components: { Navbar },
   computed: mapState({
     users: state => state.users,
   }),

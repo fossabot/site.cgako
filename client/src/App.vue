@@ -31,18 +31,14 @@
         </div>
       </transition>
 
-      <navbar></navbar>
-      <router-view/>
+      <router-view v-bind:class="{ blur: idleTimeout }"/>
 
     </div>
 </template>
 
 <script>
-import Navbar from './components/Navbar';
-
 export default {
   name: 'App',
-  components: { Navbar },
   // Глобальный таймер активности и разлогинивания
   data() { // Конфиг таймера
     return {
@@ -115,12 +111,15 @@ export default {
     // *** Событие истечения сессии *** //
 
     countdownExpired() {
+      this.$store.dispatch('logout')
+        .then(() => { this.$router.push('/login'); this.idleTimeout = false; });
     },
 
   },
   mounted() {
     if (localStorage.getItem('token') !== null) {
       this.startIdleCountdown();
+      this.idleTimeout = false;
     }
   },
 };
