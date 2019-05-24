@@ -8,7 +8,6 @@ import os
 # Конфигурация
 DEBUG = True
 CSRF_ENABLED = True
-SECRET_KEY = "9c1c01dc3ac1445a500251fc34a15d3e75a849df"
 JSON_AS_ASCII = False
 
 # Базовая директория
@@ -22,3 +21,7 @@ SQLALCHEMY_TRACK_MODIFICATIONS = 'true'
 
 # Умолчания
 LIMIT = 20  # Количество записей в пагинированном json
+
+# Аутентификация
+SECRET_KEY = "9c1c01dc3ac1445a500251fc34a15d3e75a849df" # Ключ
+TOKEN_DURATION = 1 # Длительность валидности токена в днях

@@ -34,6 +34,17 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
+      beforeEnter(to, from, next) {
+        if (store.getters.isAuthenticated) {
+          if (to.query.redirect) {
+            next(to.query.redirect);
+          } else {
+            next('/dashboard');
+          }
+        } else {
+          next();
+        }
+      },
     },
     {
       path: '/dashboard',

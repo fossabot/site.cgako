@@ -7,16 +7,20 @@
           <div class="row justify-content-center align-items-center h-100">
             <div class="jumbotron w-100 text-center">
                 <span>
-                    <h1 class="text-danger">
+                    <h1 class="text-danger noselect">
                       <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
                       size="1x" fixed-width />
-                      Вы выйдете из системы!
+                      Вы выходите из системы!
                       <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
                       size="1x" fixed-width />
                     </h1>
-                    <p>
-                        Вы были неактивны в течение {{ idleTime }} минут. Будет осуществлен
-                        выход через <span class="text-danger">{{ UICountdown }}</span> секунд.
+                    <p class="noselect">
+                        Вы были неактивны {{ idleTime*1000 | duration('humanize') }}.
+                        Будет осуществлен выход через
+                        <span class="text-danger">
+                            <b>{{ UICountdown }}</b>
+                        </span>
+                        секунд.
                     </p>
                     <button class="btn btn-primary btn-lg reset-button" @click="UIReset">
                       Продолжить работу
@@ -27,19 +31,22 @@
         </div>
       </transition>
 
+      <navbar></navbar>
       <router-view/>
 
     </div>
 </template>
 
 <script>
+import Navbar from './components/Navbar';
+
 export default {
   name: 'App',
-
+  components: { Navbar },
   // Глобальный таймер активности и разлогинивания
   data() { // Конфиг таймера
     return {
-      idleTime: 10, // Таймаут старта таймера, отслеживающего время простоя (секунды)
+      idleTime: 1800, // Таймаут старта таймера, отслеживающего время простоя (секунды)
       idleCountdown: null, // Заполняется значением таймаута и уменьшается каждую секунду
       idleTimeout: false, // Переключатель статуса таймаута
       UITime: 120, // Таймаут до предупреждения (оставшееся время до конца сессии) (секунды)
@@ -94,7 +101,6 @@ export default {
       if (!this.UICountdown) { // отсчет завершен
         clearInterval(this.setUITimer); // сброс таймера выхода
         this.UITimeout = !this.UITimeout; // переключение статуса таймаута выхода
-
         this.countdownExpired(); // начать событие истечения сессии
       }
     },
@@ -102,6 +108,7 @@ export default {
     // Обработка нажатия кнопки продолжения работы
     UIReset() {
       this.idleTimeout = !this.idleTimeout; // Переключить статус простоя
+      clearInterval(this.setUITimer); // сброс таймера выхода
       this.startIdleCountdown(); // старт таймера простоя
     },
 

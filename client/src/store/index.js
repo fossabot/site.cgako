@@ -24,6 +24,10 @@ const actions = {
         EventBus.$emit('failedAuthentication', error.response.data);
       });
   },
+  // Выход с сайта с удалением токена из локального хранилища и хранилища состояния
+  logout(context) {
+    context.commit('unsetJwtToken');
+  },
   // Загрузить пользователей
   loadUsers(context) {
     return axios.get('/api/users', { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
@@ -43,6 +47,11 @@ const mutations = {
   setJwtToken(state, payload) {
     localStorage.token = payload.jwt;
     state.jwt = payload.jwt;
+  },
+  // Очистка токена аутентификации
+  unsetJwtToken(state) {
+    localStorage.removeItem('token');
+    state.jwt = '';
   },
   // Установка списка пользователей
   setUsers(state, payload) {

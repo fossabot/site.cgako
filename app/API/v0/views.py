@@ -164,12 +164,23 @@ def login():
 
             return response
 
+        today = datetime.utcnow()
+        token_duration = current_app.config['TOKEN_DURATION']
+        day_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        day_end = day_start + timedelta(
+                                        days=token_duration)
+
         token = jwt.encode({
                             'sub': user[0].login,
-                            'iat': datetime.utcnow(),
-                            'exp': datetime.utcnow() + timedelta(seconds=10)
+                            'iat': day_start,
+                            'exp': day_end
                            },
                            current_app.config['SECRET_KEY'])
+
+        #  test = jwt.decode(token, current_app.config['SECRET_KEY'])
+        #  print(test)
+        #  print(datetime.utcfromtimestamp(test['iat']))
+        #  print(datetime.utcfromtimestamp(test['exp']))
 
         response = Response(
             response=json.dumps(token.decode('utf-8')),
