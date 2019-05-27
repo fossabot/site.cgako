@@ -4,6 +4,8 @@ import NProgress from 'nprogress';
 import DataTable from '@/components/DataTable';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
+import AdminPanel from '@/components/AdminPanel';
+import Index from '@/components/Index';
 import store from '@/store';
 
 Vue.use(Router);
@@ -13,22 +15,31 @@ const router = new Router({
   saveScrollPosition: true,
   routes: [
     {
-      path: '*',
-      component: Dashboard,
+      path: '/admin-panel',
+      component: AdminPanel,
       meta: {
         requiresAuth: true,
       },
-      beforeEnter(to, from, next) {
-        next('/dashboard');
-      },
-    },
-    {
-      path: '/users',
-      name: 'UsersDataTable',
-      component: DataTable,
-      meta: {
-        requiresAuth: true,
-      },
+      children: [
+        {
+          path: 'dashboard',
+          name: 'Dashboard',
+          component: Dashboard,
+          requiresAuth: true,
+        },
+        {
+          path: 'users',
+          name: 'UsersDataTable',
+          component: DataTable,
+          meta: {
+            requiresAuth: true,
+          },
+        },
+        {
+          path: '',
+          component: Dashboard,
+        },
+      ],
     },
     {
       path: '/login',
@@ -39,7 +50,7 @@ const router = new Router({
           if (to.query.redirect) {
             next(to.query.redirect);
           } else {
-            next('/dashboard');
+            next('/admin-panel/dashboard');
           }
         } else {
           next();
@@ -47,11 +58,15 @@ const router = new Router({
       },
     },
     {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: Dashboard,
-      meta: {
-        requiresAuth: true,
+      path: '/index',
+      name: 'Index',
+      component: Index,
+    },
+    {
+      path: '*',
+      component: Index,
+      beforeEnter(to, from, next) {
+        next('/index');
       },
     },
   ],

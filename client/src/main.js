@@ -10,7 +10,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faTrash, faPencilAlt, faInfo, faPlus, faPowerOff, faShieldAlt, faUser, faLock,
   faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright, faUserShield,
-  faBars, faBell, faCog, faUserCircle, faCircle,
+  faBars, faBell, faCog, faUserCircle, faCircle, faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faVk, faYandex, faOdnoklassniki, faGoogle, faGithub, faTrello,
@@ -27,7 +27,7 @@ library.add(faTrash, faPencilAlt, faInfo, faPlus, faPowerOff,
   faShieldAlt, faVk, faYandex, faOdnoklassniki, faGoogle, faUser, faLock,
   faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright,
   faUserShield, faBars, faGithub, faBell, faTrello, faCog, faUserCircle,
-  faCircle);
+  faCircle, faSearch);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText);

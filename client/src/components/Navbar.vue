@@ -9,10 +9,17 @@
 
         <b-collapse id="nav-collapse" is-nav>
             <b-nav-form>
-                <b-form-input size="lg"
-                type="search" class="mr-sm-2"
-                placeholder="Поиск">
-                </b-form-input>
+                <b-input-group class="mr-sm-2">
+                    <b-form-input size="lg"
+                    type="search"
+                    placeholder="Поиск">
+                    </b-form-input>
+                    <b-input-group-append>
+                        <b-button variant="outline-primary" class="navbar-search-button text-white">
+                            <font-awesome-icon :icon="['fa', 'search']" fixed-width size="1x"/>
+                        </b-button>
+                    </b-input-group-append>
+                </b-input-group>
             </b-nav-form>
         </b-collapse>
 
@@ -47,7 +54,7 @@
                     fixed-width class="mr-3" />
                     Настройки
                 </b-dropdown-item>
-                <b-dropdown-item href="#" @click="logout">
+                <b-dropdown-item @click="logout">
                     <font-awesome-icon :icon="['fa', 'sign-in-alt']"
                     fixed-width class="mr-3" />
                     Выйти</b-dropdown-item>

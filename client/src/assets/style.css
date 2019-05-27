@@ -139,6 +139,7 @@ h3 {
     background: hsla(0,0%,100%,.3);
     border: 0;
     transition: .5s cubic-bezier(.25,.8,.5,1);
+    color: white;
 }
 
 .navbar input::placeholder {
@@ -157,6 +158,15 @@ h3 {
     box-shadow: none;
     -webkit-box-shadow: none;
     border: 0;
+}
+
+.navbar-search-button, .navbar-search-button:active, .navbar-search-button:focus, .navbar-search-button:hover {
+    background: hsla(0,0%,100%,.3);
+    border: 0 !important;
+    margin-left: 1px;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    background-color: hsla(0,0%,100%,.3) !important;
 }
 
 /*

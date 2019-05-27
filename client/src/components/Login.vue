@@ -107,7 +107,7 @@ export default {
   methods: {
     authenticate() {
       this.$store.dispatch('login', { login: this.username, password: this.password })
-        .then(() => { this.$router.push(this.$route.query.redirect || '/dashboard'); });
+        .then(() => { this.$router.push(this.$route.query.redirect || '/admin-panel/dashboard'); });
     },
     checkTokenExpiration() {
       if (localStorage.getItem('token') !== null) {
