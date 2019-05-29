@@ -67,6 +67,8 @@
 </template>
 
 <script>
+import { EventBus } from '@/utils';
+
 export default {
   name: 'Navbar',
   data() {
@@ -75,8 +77,7 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch('logout')
-        .then(() => { this.$router.push('/login'); });
+      EventBus.$emit('logout');
     },
   },
 };

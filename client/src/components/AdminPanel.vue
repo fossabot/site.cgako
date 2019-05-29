@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { EventBus } from '@/utils';
 import Navbar from './Navbar';
 
 export default {
@@ -46,10 +47,10 @@ export default {
   // Глобальный таймер активности и разлогинивания
   data() { // Конфиг таймера
     return {
-      idleTime: 3600, // Таймаут старта таймера, отслеживающего время простоя (секунды)
+      idleTime: 10, // Таймаут старта таймера, отслеживающего время простоя (секунды)
       idleCountdown: null, // Заполняется значением таймаута и уменьшается каждую секунду
       idleTimeout: false, // Переключатель статуса таймаута
-      UITime: 120, // Таймаут до предупреждения (оставшееся время до конца сессии) (секунды)
+      UITime: 10, // Таймаут до предупреждения (оставшееся время до конца сессии) (секунды)
       UICountdown: null, // Заполняется значением таймаута и уменьшается каждую секунду
       UITimeout: false, // Переключатель статуса таймаута интерфейса
     };
@@ -101,7 +102,7 @@ export default {
       if (!this.UICountdown) { // отсчет завершен
         clearInterval(this.setUITimer); // сброс таймера выхода
         this.UITimeout = !this.UITimeout; // переключение статуса таймаута выхода
-        this.countdownExpired(); // начать событие истечения сессии
+        this.logout(); // начать событие истечения сессии
       }
     },
 
@@ -114,9 +115,11 @@ export default {
 
     // *** Событие истечения сессии *** //
 
-    countdownExpired() {
+    logout() {
+      this.idleTimeout = false;
+      clearInterval(this.setIdleTimer);
       this.$store.dispatch('logout')
-        .then(() => { this.$router.push('/login'); this.idleTimeout = false; });
+        .then(() => { this.$router.push('/login'); });
     },
 
   },
@@ -125,6 +128,10 @@ export default {
       this.startIdleCountdown();
       this.idleTimeout = false;
     }
+    EventBus.$on('logout', this.logout);
+  },
+  beforeDestroy() {
+    EventBus.$off('logout');
   },
 };
 </script>
