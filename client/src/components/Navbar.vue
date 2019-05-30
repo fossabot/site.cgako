@@ -3,7 +3,7 @@
     <b-navbar sticky toggleable="lg" variant="primary">
         <b-navbar-nav class="ml-auto">
             <b-nav-item v-b-toggle.my-collapse class="navbar-pictogram pr-5"
-            href="#" title="Боковое меню">
+            href="#" title="Боковое меню" @click="sidebarToggle">
                 <font-awesome-icon :icon="['fa', 'bars']" fixed-width size="1x"/>
             </b-nav-item>
         </b-navbar-nav>
@@ -84,6 +84,9 @@ export default {
   methods: {
     logout() {
       EventBus.$emit('logout');
+    },
+    sidebarToggle() {
+      EventBus.$emit('sidebarToggle');
     },
   },
 };

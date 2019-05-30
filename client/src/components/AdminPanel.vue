@@ -31,9 +31,9 @@
         </div>
       </transition>
 
-      <sidebar class="active"></sidebar>
+      <sidebar v-bind:class="{ 'open': sidebarActive }"></sidebar>
       <navbar></navbar>
-      <router-view class="shifted"/>
+      <router-view v-bind:class="{ 'shifted': sidebarActive }"/>
 
     </div>
 </template>
@@ -55,6 +55,7 @@ export default {
       UITime: 120, // Таймаут до предупреждения (оставшееся время до конца сессии) (секунды)
       UICountdown: null, // Заполняется значением таймаута и уменьшается каждую секунду
       UITimeout: false, // Переключатель статуса таймаута интерфейса
+      sidebarActive: false, // Переключатель сайдбара
     };
   },
 
@@ -132,9 +133,13 @@ export default {
       this.idleTimeout = false;
     }
     EventBus.$on('logout', this.logout);
+    EventBus.$on('sidebarToggle', () => {
+      this.sidebarActive = !this.sidebarActive;
+    });
   },
   beforeDestroy() {
     EventBus.$off('logout');
+    EventBus.$off('sidebarToggle');
   },
 };
 </script>

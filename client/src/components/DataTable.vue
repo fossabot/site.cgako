@@ -6,7 +6,7 @@
       </button>
     </div>
     <div class="row-fluid pb-3">
-      <table class="table table-hover table-responsive">
+      <table class="table table-hover">
         <thead>
           <tr>
             <th><input type="checkbox" v-model="selectAll" @click="select"></th>

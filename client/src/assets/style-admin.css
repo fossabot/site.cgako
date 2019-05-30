@@ -140,10 +140,11 @@ background-color: #FED540;
 ---------------------------- Сайдбар -----------------------------
 */
 
-aside {
+aside.sidebar {
   width: 16rem;
   position: fixed;
   top: 4rem;
+  left: -16rem;
   height: 100vh;
   z-index: 999;
   background-color: white;
@@ -151,6 +152,10 @@ aside {
   overflow-y: auto;
   overflow-x: hidden;
   border: 1px solid rgb(224, 224, 224);
+}
+
+aside.sidebar.open {
+  left: 0rem;
 }
 
 .sidebar .list-group-item {
