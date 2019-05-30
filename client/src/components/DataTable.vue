@@ -1,8 +1,5 @@
 <template>
-  <main class="container-fluid fill-height p-4">
-    <div class="row-fluid pb-3">
-      <router-link :to="{ name: 'Dashboard' }"><h2>Главная панель</h2></router-link><hr>
-    </div>
+  <main class="container-fluid">
     <div class="row-fluid pb-3">
       <button type="button" title="Создать запись" class="btn btn-success btn-sm">
         <font-awesome-icon icon="plus" fixed-width />

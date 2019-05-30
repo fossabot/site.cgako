@@ -153,3 +153,7 @@ export default {
   },
 };
 </script>
+
+<style>
+   @import '../assets/style-admin.css';
+</style>

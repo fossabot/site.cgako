@@ -2,10 +2,16 @@
 
     <b-navbar sticky toggleable="lg" variant="primary">
         <b-navbar-nav class="ml-auto">
-            <b-nav-item class="navbar-pictogram pr-5" href="#" title="Боковое меню">
+            <b-nav-item v-b-toggle.my-collapse class="navbar-pictogram pr-5"
+            href="#" title="Боковое меню">
                 <font-awesome-icon :icon="['fa', 'bars']" fixed-width size="1x"/>
             </b-nav-item>
         </b-navbar-nav>
+
+        <b-navbar-brand class="pr-5 text-white" href="#">
+            <img src="../assets/logo-1.png" class="p-0 mr-2" alt="ЦГАКО" width=29>
+            ЦГАКО <sup>cms</sup>
+        </b-navbar-brand>
 
         <b-collapse id="nav-collapse" is-nav>
             <b-nav-form>

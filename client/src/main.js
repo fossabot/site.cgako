@@ -1,7 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import 'bootstrap/dist/css/bootstrap.css';
-import './assets/style.css';
 
 import BootstrapVue from 'bootstrap-vue';
 
@@ -10,7 +9,8 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faTrash, faPencilAlt, faInfo, faPlus, faPowerOff, faShieldAlt, faUser, faLock,
   faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright, faUserShield,
-  faBars, faBell, faCog, faUserCircle, faCircle, faSearch,
+  faBars, faBell, faCog, faUserCircle, faCircle, faSearch, faThLarge, faFolder, faGlobeEurope,
+  faChevronDown, faNewspaper,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faVk, faYandex, faOdnoklassniki, faGoogle, faGithub, faTrello,
@@ -27,7 +27,7 @@ library.add(faTrash, faPencilAlt, faInfo, faPlus, faPowerOff,
   faShieldAlt, faVk, faYandex, faOdnoklassniki, faGoogle, faUser, faLock,
   faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright,
   faUserShield, faBars, faGithub, faBell, faTrello, faCog, faUserCircle,
-  faCircle, faSearch);
+  faCircle, faSearch, faThLarge, faFolder, faGlobeEurope, faChevronDown, faNewspaper);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText);

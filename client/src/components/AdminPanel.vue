@@ -31,8 +31,9 @@
         </div>
       </transition>
 
+      <sidebar class="active"></sidebar>
       <navbar></navbar>
-      <router-view/>
+      <router-view class="shifted"/>
 
     </div>
 </template>
@@ -40,17 +41,18 @@
 <script>
 import { EventBus } from '@/utils';
 import Navbar from './Navbar';
+import Sidebar from './Sidebar';
 
 export default {
   name: 'AdminPanel',
-  components: { Navbar },
+  components: { Navbar, Sidebar },
   // Глобальный таймер активности и разлогинивания
   data() { // Конфиг таймера
     return {
-      idleTime: 10, // Таймаут старта таймера, отслеживающего время простоя (секунды)
+      idleTime: 1800, // Таймаут старта таймера, отслеживающего время простоя (секунды)
       idleCountdown: null, // Заполняется значением таймаута и уменьшается каждую секунду
       idleTimeout: false, // Переключатель статуса таймаута
-      UITime: 10, // Таймаут до предупреждения (оставшееся время до конца сессии) (секунды)
+      UITime: 120, // Таймаут до предупреждения (оставшееся время до конца сессии) (секунды)
       UICountdown: null, // Заполняется значением таймаута и уменьшается каждую секунду
       UITimeout: false, // Переключатель статуса таймаута интерфейса
     };
@@ -71,6 +73,7 @@ export default {
     // Отсчет времени простоя. В конце показывает интерфейс
     idleTimer() {
       this.idleCountdown = this.idleCountdown - 1;
+      // console.log(this.idleCountdown);
       if (!this.idleCountdown) {
         clearInterval(this.setIdleTimer); // очистить таймер
         this.idleTimeout = !this.idleTimeout; // переключить статус таймаута
@@ -135,3 +138,7 @@ export default {
   },
 };
 </script>
+
+<style>
+   @import '../assets/style-admin.css';
+</style>
