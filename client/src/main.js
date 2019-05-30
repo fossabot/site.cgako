@@ -8,10 +8,13 @@ import BootstrapVue from 'bootstrap-vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faTrash, faPencilAlt, faInfo, faPlus, faPowerOff, faShieldAlt, faUser, faLock,
-  faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright, faUserShield,
+  faExclamationTriangle, faSignInAlt, faSignOutAlt, faQuestion, faUserShield,
   faBars, faBell, faCog, faUserCircle, faCircle, faSearch, faThLarge, faFolder, faGlobeEurope,
-  faChevronDown, faNewspaper,
+  faChevronDown, faNewspaper, faAt,
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCopyright as farCopyright,
+} from '@fortawesome/free-regular-svg-icons';
 import {
   faVk, faYandex, faOdnoklassniki, faGoogle, faGithub, faTrello,
 } from '@fortawesome/free-brands-svg-icons';
@@ -25,9 +28,10 @@ import store from './store';
 // Добавление иконок в библиотеку
 library.add(faTrash, faPencilAlt, faInfo, faPlus, faPowerOff,
   faShieldAlt, faVk, faYandex, faOdnoklassniki, faGoogle, faUser, faLock,
-  faExclamationTriangle, faSignInAlt, faSignOutAlt, faCubes, faQuestion, faCopyright,
+  faExclamationTriangle, faSignInAlt, faSignOutAlt, faQuestion,
   faUserShield, faBars, faGithub, faBell, faTrello, faCog, faUserCircle,
-  faCircle, faSearch, faThLarge, faFolder, faGlobeEurope, faChevronDown, faNewspaper);
+  faCircle, faSearch, faThLarge, faFolder, faGlobeEurope, faChevronDown, faNewspaper,
+  faAt, farCopyright);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText);

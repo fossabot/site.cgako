@@ -34,6 +34,7 @@
       <sidebar v-bind:class="{ 'open': sidebarActive }"></sidebar>
       <navbar></navbar>
       <router-view v-bind:class="{ 'shifted': sidebarActive }"/>
+      <footerline v-bind:class="{ 'shifted': sidebarActive }"></footerline>
 
     </div>
 </template>
@@ -42,10 +43,11 @@
 import { EventBus } from '@/utils';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
+import Footerline from './Footer';
 
 export default {
   name: 'AdminPanel',
-  components: { Navbar, Sidebar },
+  components: { Navbar, Sidebar, Footerline },
   // Глобальный таймер активности и разлогинивания
   data() { // Конфиг таймера
     return {
