@@ -19,13 +19,17 @@ const router = new Router({
       component: AdminPanel,
       meta: {
         requiresAuth: true,
+        breadCrumb: 'CMS',
       },
       children: [
         {
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard,
-          requiresAuth: true,
+          meta: {
+            requiresAuth: true,
+            breadCrumb: 'Главная панель',
+          },
         },
         {
           path: 'users',
@@ -33,6 +37,7 @@ const router = new Router({
           component: DataTable,
           meta: {
             requiresAuth: true,
+            breadCrumb: 'Пользователи',
           },
         },
         {

@@ -1,5 +1,6 @@
 <template>
   <main class="container-fluid">
+    <breadcumbs></breadcumbs>
     <div class="row-fluid pb-3">
       <button type="button" title="Создать запись" class="btn btn-success btn-sm">
         <font-awesome-icon icon="plus" fixed-width />
@@ -64,6 +65,8 @@
 
 <script>
 import { mapState } from 'vuex';
+import { EventBus } from '@/utils';
+import Breadcumbs from './Breadcumbs';
 
 export default {
   name: 'DataTable',
@@ -73,6 +76,7 @@ export default {
       selectAll: false,
     };
   },
+  components: { Breadcumbs },
   computed: mapState({
     users: state => state.users,
   }),
@@ -87,6 +91,9 @@ export default {
           this.selected.push(this.users.results[i].id);
         }
       }
+    },
+    forceRerender() {
+      EventBus.$emit('forceRerender');
     },
   },
 };

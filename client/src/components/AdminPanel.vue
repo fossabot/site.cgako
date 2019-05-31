@@ -33,7 +33,7 @@
 
       <sidebar v-bind:class="{ 'open': sidebarActive }"></sidebar>
       <navbar></navbar>
-      <router-view v-bind:class="{ 'shifted': sidebarActive }"/>
+      <router-view v-bind:class="{ 'shifted': sidebarActive }" :key="componentKey"/>
       <footerline v-bind:class="{ 'shifted': sidebarActive }"></footerline>
 
     </div>
@@ -58,6 +58,7 @@ export default {
       UICountdown: null, // Заполняется значением таймаута и уменьшается каждую секунду
       UITimeout: false, // Переключатель статуса таймаута интерфейса
       sidebarActive: false, // Переключатель сайдбара
+      componentKey: 0,
     };
   },
 
@@ -138,10 +139,14 @@ export default {
     EventBus.$on('sidebarToggle', () => {
       this.sidebarActive = !this.sidebarActive;
     });
+    EventBus.$on('forceRerender', () => {
+      this.componentKey += 1;
+    });
   },
   beforeDestroy() {
     EventBus.$off('logout');
     EventBus.$off('sidebarToggle');
+    EventBus.$off('forceRerender');
   },
 };
 </script>
