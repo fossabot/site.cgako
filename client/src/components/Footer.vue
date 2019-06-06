@@ -14,7 +14,9 @@
                 <font-awesome-icon :icon="['fab', 'github']" fixed-width size="1x"/>
             </a>
             <a href="https://vk.com/goomba41" title="VK">
-                Бородавкин А.В.
+                Бородавкин А.В. c
+                <font-awesome-icon :icon="['fa', 'heart']"
+                style="color: red;" fixed-width size="1x"/>
             </a>
         </span>
     </footer>

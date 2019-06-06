@@ -7,20 +7,6 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400,700&subset=cyrillic');
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap');
 
-.collapsing {
-  position: relative;
-  height: 0;
-  overflow: hidden;
-  -webkit-transition: all 0.1s ease-in-out;
-  -moz-transition: all 0.1s ease-in-out;
-  transition: all 0.1s ease-in-out;
-}
-
-.collapsed > .when-opened,
-:not(.collapsed) > .when-closed {
-  height: 0;
-}
-
 .login-theme {
     position: absolute;
     top: 0;
@@ -56,7 +42,6 @@
     color: rgba(0,0,0,.87);
     border-radius: 2px;
     text-decoration: none;
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12)!important;
 }
 
 .text-primary-color {
@@ -64,21 +49,8 @@
     caret-color: #0B4FA6 !important;
 }
 
-h1 {
-    font-size: 3rem;
-    font-weight: 100;
-    text-transform: uppercase;
-}
-
-h3 {
-    font-size: 1rem;
-    font-weight: 100;
-}
-
-.notation, .field-desc {
-    font-size: 0.75rem;
-    font-weight: 300;
-    font-style: italic;
+.shaded {
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2),0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12)!important;
 }
 
 .border-top {
@@ -90,6 +62,10 @@ h3 {
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active до версии 2.1.8 */ {
     opacity: 0;
+}
+
+.vdp-datepicker input {
+  cursor: pointer;
 }
 
 .noselect {
@@ -166,6 +142,20 @@ aside.sidebar.open {
 .sidebar a {
   color: #212529;
   text-decoration: none;
+}
+
+.collapsing {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+
+.collapsed > .when-opened,
+:not(.collapsed) > .when-closed {
+  height: 0;
 }
 
 /*
@@ -322,6 +312,23 @@ footer .caption {
 ---------------------------- Стили текста -----------------------------
 */
 
+h1 {
+    font-size: 3rem;
+    font-weight: 100;
+    text-transform: uppercase;
+}
+
+h3 {
+    font-size: 1rem;
+    font-weight: 100;
+}
+
+.notation, .field-desc {
+    font-size: 0.75rem;
+    font-weight: 300;
+    font-style: italic;
+}
+
 /*
 ---------------------------- Текст с градиентом -----------------------------
 */
@@ -429,6 +436,40 @@ footer .caption {
   box-shadow: 0 0 0 0.2rem rgba(76, 117, 163, 0.5);
 }
 
+.btn-vk {
+  color: #fff;
+  background-color: #4C75A3;
+  border-color: #4C75A3;
+}
+
+.btn-vk:hover {
+  color: #fff;
+  background-color: #4C75A3;
+  border-color: #4C75A3;
+}
+
+.btn-vk:focus, .btn-vk.focus {
+  box-shadow: 0 0 0 0.2rem rgba(76, 117, 163, 0.5);
+}
+
+.btn-vk.disabled, .btn-vk:disabled {
+  color: #fff;
+  background-color: #4C75A3;
+  border-color: #4C75A3;
+}
+
+.btn-vk:not(:disabled):not(.disabled):active, .btn-vk:not(:disabled):not(.disabled).active,
+.show > .btn-vk.dropdown-toggle {
+  color: #fff;
+  background-color: #4C75A3;
+  border-color: #4C75A3;
+}
+
+.btn-vk:not(:disabled):not(.disabled):active:focus, .btn-vk:not(:disabled):not(.disabled).active:focus,
+.show > .btn-vk.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(76, 117, 163, 0.5);
+}
+
 /*
 ---------------------------- Одноклассники логин -----------------------------
 */
@@ -462,6 +503,40 @@ footer .caption {
 
 .btn-outline-ok:not(:disabled):not(.disabled):active:focus, .btn-outline-ok:not(:disabled):not(.disabled).active:focus,
 .show > .btn-outline-ok.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(237, 129, 43, 0.5);
+}
+
+.btn-ok {
+  color: #fff;
+  background-color: #ED812B;
+  border-color: #ED812B;
+}
+
+.btn-ok:hover {
+  color: #fff;
+  background-color: #ED812B;
+  border-color: #ED812B;
+}
+
+.btn-ok:focus, .btn-ok.focus {
+  box-shadow: 0 0 0 0.2rem rgba(237, 129, 43, 0.5);
+}
+
+.btn-ok.disabled, .btn-ok:disabled {
+  color: #fff;
+  background-color: #ED812B;
+  border-color: #ED812B;
+}
+
+.btn-ok:not(:disabled):not(.disabled):active, .btn-ok:not(:disabled):not(.disabled).active,
+.show > .btn-ok.dropdown-toggle {
+  color: #fff;
+  background-color: #ED812B;
+  border-color: #ED812B;
+}
+
+.btn-ok:not(:disabled):not(.disabled):active:focus, .btn-ok:not(:disabled):not(.disabled).active:focus,
+.show > .btn-ok.dropdown-toggle:focus {
   box-shadow: 0 0 0 0.2rem rgba(237, 129, 43, 0.5);
 }
 
@@ -501,6 +576,40 @@ footer .caption {
   box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.5);
 }
 
+.btn-yandex {
+  color: #fff;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn-yandex:hover {
+  color: #fff;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn-yandex:focus, .btn-yandex.focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.5);
+}
+
+.btn-yandex.disabled, .btn-yandex:disabled {
+  color: #fff;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn-yandex:not(:disabled):not(.disabled):active, .btn-yandex:not(:disabled):not(.disabled).active,
+.show > .btn-yandex.dropdown-toggle {
+  color: #fff;
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.btn-yandex:not(:disabled):not(.disabled):active:focus, .btn-yandex:not(:disabled):not(.disabled).active:focus,
+.show > .btn-yandex.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.5);
+}
+
 /*
 ---------------------------- Google логин -----------------------------
 */
@@ -535,4 +644,68 @@ footer .caption {
 .btn-outline-google:not(:disabled):not(.disabled):active:focus, .btn-outline-google:not(:disabled):not(.disabled).active:focus,
 .show > .btn-outline-google.dropdown-toggle:focus {
   box-shadow: 0 0 0 0.2rem rgba(221, 75, 57, 0.5);
+}
+
+.btn-google {
+  color: #fff;
+  background-color: #DD4B39;
+  border-color: #DD4B39;
+}
+
+.btn-google:hover {
+  color: #fff;
+  background-color: #DD4B39;
+  border-color: #DD4B39;
+}
+
+.btn-google:focus, .btn-google.focus {
+  box-shadow: 0 0 0 0.2rem rgba(221, 75, 57, 0.5);
+}
+
+.btn-google.disabled, .btn-google:disabled {
+  color: #fff;
+  background-color: #DD4B39;
+  border-color: #DD4B39;
+}
+
+.btn-google:not(:disabled):not(.disabled):active, .btn-google:not(:disabled):not(.disabled).active,
+.show > .btn-google.dropdown-toggle {
+  color: #fff;
+  background-color: #DD4B39;
+  border-color: #DD4B39;
+}
+
+.btn-google:not(:disabled):not(.disabled):active:focus, .btn-google:not(:disabled):not(.disabled).active:focus,
+.show > .btn-google.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(221, 75, 57, 0.5);
+}
+
+/*
+---------------------------- Профиль вошедшего пользователя -----------------------------
+*/
+
+article.profile-card h1, article.profile-card h2, article.profile-card h3 {
+  font-weight: 100;
+}
+
+article.profile-card h3 {
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+article.profile-card h2 {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+article.profile-card img.profile-image {
+  border: 5px solid #ced4da;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+  max-width: 7rem;
+}
+
+#password-modal .modal-content {
+  border: 1px solid #dc3545;
 }

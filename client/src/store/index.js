@@ -3,14 +3,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import { isValidJwt, EventBus } from '@/utils';
+import { isValidJwt, EventBus, currentUserLogin } from '@/utils';
 
 Vue.use(Vuex);
 
 // Источник данных
 const state = {
   users: [],
-  authErrors: [],
+  profile: { socials: '' },
+  uid: '',
   jwt: localStorage.getItem('token') || '', // Загрузить токен из хранилища, или инициировать пустой, если нет в хранилище
 };
 
@@ -27,6 +28,17 @@ const actions = {
   // Выход с сайта с удалением токена из локального хранилища и хранилища состояния
   logout(context) {
     context.commit('unsetJwtToken');
+  },
+  // Загрузить пользователей
+  loadProfile(context) {
+    return axios.get(`/api/users/${context.state.uid}`, { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
+      .then((response) => {
+        context.commit('setProfile', { profile: response.data });
+      })
+      .catch((error) => {
+        // eslint-disable-next-line
+        console.error(error);
+      });
   },
   // Загрузить пользователей
   loadUsers(context) {
@@ -57,6 +69,9 @@ const mutations = {
   setUsers(state, payload) {
     state.users = payload.users;
   },
+  setProfile(state, payload) {
+    state.profile = payload.profile;
+  },
 };
 
 // Переиспользуемые "получатели" данных
@@ -64,6 +79,9 @@ const getters = {
   // Проверка аутентикации путем верификации токена
   isAuthenticated(state) {
     return isValidJwt(state.jwt);
+  },
+  currentUser(state) {
+    return currentUserLogin(state.jwt);
   },
 };
 

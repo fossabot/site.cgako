@@ -3,7 +3,7 @@
     <div class="container-fluid login-theme fill-height">
 
         <div class="row justify-content-center align-items-center h-100">
-            <div class="form-box col col-xs-12 col-sm-8 col-md-4 col-lg-4 p-3">
+            <div class="form-box col col-xs-12 col-sm-8 col-md-4 col-lg-4 p-3 shaded">
 
                 <div class="row justify-content-center align-items-center text-center mx-auto p-3">
                     <div class="col mx-auto">

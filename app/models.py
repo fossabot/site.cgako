@@ -19,6 +19,7 @@ class CmsUsers(db.Model):
     patronymic = db.Column(db.String(20))
     email = db.Column(db.String(50), unique=True)
     phone = db.Column(db.String(18), unique=True)
+    about_me = db.Column(db.Text())
 
     birth_date = db.Column(db.Date)
     last_login = db.Column(db.DateTime)
@@ -51,12 +52,12 @@ class CmsUsers(db.Model):
 
     def __init__(self, login, password,
                  name, surname, patronymic,
-                 email, phone, birth_date,
+                 email, phone, birth_date, about_me=None,
                  last_login=None, status=None, socials=None, photo=None):
         """Конструктор класса."""
         self.login = login
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
-        self.socials = None if socials is None else socials
+        self.socials = { "ok": "", "vk": "", "google": "", "yandex": "" } if socials is None else socials
         self.photo = None if photo is None else photo
         self.name = name
         self.surname = surname
@@ -66,6 +67,7 @@ class CmsUsers(db.Model):
         self.birth_date = birth_date
         self.last_login = None if last_login is None else last_login
         self.status = 1 if status is None else status
+        self.about_me = None if about_me is None else about_me
 
     def __repr__(self):
         """Форматирование представления экземпляра класса."""

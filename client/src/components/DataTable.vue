@@ -65,7 +65,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import { EventBus } from '@/utils';
 import Breadcumbs from './Breadcumbs';
 
 export default {
@@ -91,9 +90,6 @@ export default {
           this.selected.push(this.users.results[i].id);
         }
       }
-    },
-    forceRerender() {
-      EventBus.$emit('forceRerender');
     },
   },
 };

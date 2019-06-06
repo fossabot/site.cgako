@@ -51,7 +51,7 @@ def token_required(f):
         try:
             token = auth_headers[1]
             data = jwt.decode(token, current_app.config['SECRET_KEY'])
-            user = CmsUsers.query.filter_by(login=data['sub']).first()
+            user = CmsUsers.query.filter_by(id=data['uid']).first()
             if not user:
                 raise RuntimeError('User not found')
             return f(user, *args, **kwargs)
@@ -171,7 +171,7 @@ def login():
                                         days=token_duration)
 
         token = jwt.encode({
-                            'sub': user[0].login,
+                            'uid': user[0].id,
                             'iat': day_start,
                             'exp': day_end
                            },
@@ -289,7 +289,8 @@ def post_users(current_user):
                 patronymic=post_data['patronymic'],
                 birth_date=post_data['birth_date'],
                 email=post_data['email'],
-                phone=post_data["phone"]
+                phone=post_data['phone'],
+                about_me=post_data['about_me']
             )
 
             db.session.add(user)

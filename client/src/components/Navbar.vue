@@ -50,7 +50,7 @@
                 <template slot="button-content">
                     <img src="../assets/avatar.png" alt="Фотокарточка" class="w-100">
                 </template>
-                <b-dropdown-item href="#">
+                <b-dropdown-item :to="{ name: 'UserProfile' }">
                     <font-awesome-icon :icon="['fa', 'user-circle']"
                     fixed-width class="mr-3" />
                     Профиль

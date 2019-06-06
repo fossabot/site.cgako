@@ -11,3 +11,11 @@ export function isValidJwt(jwt) {
   const now = new Date();
   return now < exp;
 }
+
+export function currentUserLogin(jwt) {
+  if (!jwt || jwt.split('.').length < 3) {
+    return false;
+  }
+  const data = JSON.parse(atob(jwt.split('.')[1]));
+  return data.uid;
+}

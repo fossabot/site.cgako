@@ -5,6 +5,7 @@ import DataTable from '@/components/DataTable';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
 import AdminPanel from '@/components/AdminPanel';
+import Profile from '@/components/Profile';
 import Index from '@/components/Index';
 import store from '@/store';
 
@@ -20,6 +21,7 @@ const router = new Router({
       meta: {
         requiresAuth: true,
         breadCrumb: 'CMS',
+        title: 'CMS',
       },
       children: [
         {
@@ -29,6 +31,7 @@ const router = new Router({
           meta: {
             requiresAuth: true,
             breadCrumb: 'Главная панель',
+            title: 'CMS - Главная панель',
           },
         },
         {
@@ -38,6 +41,17 @@ const router = new Router({
           meta: {
             requiresAuth: true,
             breadCrumb: 'Пользователи',
+            title: 'CMS - Пользователи',
+          },
+        },
+        {
+          path: 'profile',
+          name: 'UserProfile',
+          component: Profile,
+          meta: {
+            requiresAuth: true,
+            breadCrumb: 'Профиль',
+            title: 'CMS - Профиль',
           },
         },
         {
@@ -50,6 +64,9 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
+      meta: {
+        title: 'Авторизация',
+      },
       beforeEnter(to, from, next) {
         if (store.getters.isAuthenticated) {
           if (to.query.redirect) {
@@ -66,6 +83,9 @@ const router = new Router({
       path: '/index',
       name: 'Index',
       component: Index,
+      meta: {
+        title: 'Главная',
+      },
     },
     {
       path: '*',
@@ -82,6 +102,7 @@ const router = new Router({
 // если да, то проверить статус аутентификации,
 // если не аутентифицирован, редирект на логин, иначе перейти по маршруту
 router.beforeEach((to, from, next) => {
+  document.title = `ЦГАКО - ${to.meta.title}`;
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!store.getters.isAuthenticated) {
       next({
@@ -91,6 +112,7 @@ router.beforeEach((to, from, next) => {
         },
       });
     } else {
+      store.state.uid = store.getters.currentUser;
       next();
     }
   } else {
