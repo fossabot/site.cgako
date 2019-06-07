@@ -698,12 +698,68 @@ article.profile-card h2 {
   font-weight: 900;
 }
 
+.profile-card .card-profile-image {
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  width: 7rem;
+  height: 7rem;
+}
+
 article.profile-card img.profile-image {
   border: 5px solid #ced4da;
   position: relative;
-  overflow: hidden;
   border-radius: 50%;
-  max-width: 7rem;
+  width: 100%;
+  height: 100%;
+}
+
+.profile-card .profile-image-overlay {
+  background-color: rgba(11, 79, 166, 0.4);
+  background: linear-gradient(65deg, rgba(11, 79, 166, 0.4), rgba(253, 199, 0, 0.4));
+  color: white;
+  font-size: 1.5rem;
+  align-items: center;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity 0.25s;
+  z-index: 1
+}
+.profile-card .profile-image-overlay:hover {
+  opacity: 1;
+}
+
+#avatar-modal .modal-content .custom-file-input:lang(ru) ~ .custom-file-label::after {
+  content: 'Выбор';
+}
+
+#avatar-modal .modal-content img.profile-image-preview {
+  border: 5px solid #ced4da;
+  position: relative;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+img.profile-image-preview.preview-sm {
+  width: 3rem;
+  height: 3rem;
+}
+
+img.profile-image-preview.preview-md {
+  width: 7rem;
+  height: 7rem;
+}
+
+img.profile-image-preview.preview-square {
+  border-radius: 0.6rem !important;
 }
 
 #password-modal .modal-content {

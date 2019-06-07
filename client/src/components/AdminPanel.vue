@@ -148,6 +148,9 @@ export default {
     EventBus.$off('sidebarToggle');
     EventBus.$off('forceRerender');
   },
+  beforeMount() {
+    this.$store.dispatch('loadProfile');
+  },
 };
 </script>
 

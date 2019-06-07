@@ -1,5 +1,6 @@
 # SITE SPECIFIC
 migrations/
+client/static/
 
 # Geany files
 *.geany

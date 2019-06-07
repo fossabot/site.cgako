@@ -8,6 +8,10 @@ import jwt
 
 import traceback
 
+import uuid
+
+import hashlib
+
 from datetime import datetime, timedelta
 
 from urllib.parse import urljoin
@@ -264,7 +268,7 @@ def post_users(current_user):
     """ Добавление записи пользователя в БД"""
 
     try:
-
+        #  hashname = uuid.uuid4().hex + '.' + photo.filename.rsplit('.', 1)[1]
         post_data = request.get_json()
 
         exist = CmsUsers.query.filter(

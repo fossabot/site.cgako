@@ -89,8 +89,15 @@
 
       <div class="col-3">
         <b-card tag="article" style="max-width: 20rem;" class="profile-card shaded text-center">
-          <img :src="'/static/profile_avatars/avatar.png'"
-          alt="Фотокарточка" class="profile-image mb-4" rounded="circle">
+          <div class="card-profile-image mb-4 mx-auto">
+            <div class="profile-image-overlay" title="Вклеить фотокарточку" v-b-modal.avatar-modal>
+              <font-awesome-icon :icon="['fa', 'upload']" fixed-width />
+            </div>
+            <img v-if="profile.photo" :src="'/static/profile_avatars/'+profile.photo"
+            alt="Фотокарточка" class="profile-image">
+            <img v-else :src="'/static/profile_avatars/default.png'"
+            alt="Фотокарточка" class="profile-image">
+          </div>
           <b-card-text class="text-center">
             <h3>{{profile.surname}}<br>
             {{profile.name}} {{profile.patronymic}}<br>
@@ -142,8 +149,7 @@
 
     </div>
 
-    <b-modal ref="addBookModal"
-             id="password-modal"
+    <b-modal id="password-modal"
              title="Смена пароля"
              hide-footer size="sm" centered
             :header-bg-variant="'danger'"
@@ -205,6 +211,46 @@
       </b-form>
     </b-modal>
 
+    <b-modal id="avatar-modal"
+             title="Вклеить фотокарточку"
+             hide-footer size="md" centered
+            :header-bg-variant="'primary'"
+            :header-text-variant="'light'">
+
+      <div class=" row w-100 mx-auto pb-3 justify-content-center align-items-center">
+        <img :src="imageData" alt="Предпросмотр средний квадрат"
+        class="profile-image-preview preview-md preview-square mr-4">
+        <img :src="imageData" alt="Предпросмотр средний"
+        class="profile-image-preview preview-md mr-4">
+        <img :src="imageData" alt="Предпросмотр маленький"
+        class="profile-image-preview preview-sm mr-4">
+      </div>
+
+      <b-form class="w-100">
+
+        <b-form-group
+        description="Товарищам будет проще узнать Вас, если Вы вклеите свою настоящую фотокарточку.
+Она должна соответствовать ГОСТам ДЖиПег, ГиФ или ПэНГэ.">
+
+          <b-form-file
+            ref="imageInput"
+            @input="onSelectImage"
+            lang="ru"
+            v-model="file"
+            placeholder="Выберите фотокарточку..."
+            drop-placeholder="Бросьте сюда..."
+            accept="image/jpeg, image/png, image/gif"
+          ></b-form-file>
+
+        </b-form-group>
+
+        <b-button type="submit" block variant="primary" title="Установить новую фотокарточку">
+          <font-awesome-icon :icon="['fa', 'save']" fixed-width />
+        </b-button>
+
+      </b-form>
+    </b-modal>
+
   </main>
 </template>
 
@@ -230,6 +276,7 @@ export default {
       passwordNew: '',
       passwordNewSize: 8,
       passwordConfirm: false,
+      imageData: '/static/profile_avatars/default.png',
     };
   },
   components: { Breadcumbs, Datepicker },
@@ -252,9 +299,17 @@ export default {
       }
       this.passwordNew = password;
     },
-  },
-  beforeMount() {
-    this.$store.dispatch('loadProfile');
+    onSelectImage() {
+      const { files } = this.$refs.imageInput.$refs.input;
+      if (files && files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.imageData = e.target.result;
+        };
+        reader.readAsDataURL(files[0]);
+        this.$emit('input', files[0]);
+      }
+    },
   },
   computed: mapState({
     profile: state => state.profile,

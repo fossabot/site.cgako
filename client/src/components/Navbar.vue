@@ -48,7 +48,10 @@
             </b-nav-item>
             <b-nav-item-dropdown right class="navbar-pictogram">
                 <template slot="button-content">
-                    <img src="../assets/avatar.png" alt="Фотокарточка" class="w-100">
+                    <b-img v-if="profile.photo" :src="'/static/profile_avatars/'+profile.photo"
+                    rounded="circle" alt="Фотокарточка" class="w-100"></b-img>
+                    <b-img v-else :src="'/static/profile_avatars/default.png'"
+                    rounded="circle" alt="Фотокарточка" class="w-100"></b-img>
                 </template>
                 <b-dropdown-item :to="{ name: 'UserProfile' }">
                     <font-awesome-icon :icon="['fa', 'user-circle']"
@@ -65,15 +68,14 @@
                     fixed-width class="mr-3" />
                     Выйти</b-dropdown-item>
             </b-nav-item-dropdown>
-
         </b-navbar-nav>
-
     </b-navbar>
 
 </template>
 
 <script>
 import { EventBus } from '@/utils';
+import { mapState } from 'vuex';
 
 export default {
   name: 'Navbar',
@@ -89,5 +91,8 @@ export default {
       EventBus.$emit('sidebarToggle');
     },
   },
+  computed: mapState({
+    profile: state => state.profile,
+  }),
 };
 </script>
