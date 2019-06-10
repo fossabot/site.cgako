@@ -10,8 +10,6 @@ import traceback
 
 import uuid
 
-import hashlib
-
 from datetime import datetime, timedelta
 
 from urllib.parse import urljoin
@@ -21,7 +19,7 @@ from flask import current_app, json, Blueprint, \
 
 from functools import wraps
 
-from app import db
+from app import bcrypt, db
 from app.models import CmsUsers, CmsUsersSchema
 
 API0 = Blueprint('API0', __name__)
@@ -198,10 +196,78 @@ def login():
 
     return response
 
+# ------------------------------------------------------------
+# Редактирование профиля
+# ------------------------------------------------------------
+
+
+@API0.route('/profile/<int:uid>', methods=['PUT'])
+@token_required
+def update_profile(current_user, uid):
+    """ Изменение профиля пользователя"""
+
+    try:
+
+        update_data = request.get_json()
+
+        if 'passwordForm' in update_data:
+
+            form_data = update_data['passwordForm']
+
+            auth_data = {'login': form_data['login'],
+                         'password': form_data['passwordOld']}
+            user = CmsUsers.authenticate(**auth_data)
+
+            if not user[0]:
+
+                response = Response(
+                    response=json.dumps({'type': 'error',
+                                         'text': user[1],
+                                         'field': user[2]}),
+                    status=401,
+                    mimetype='application/json'
+                )
+
+                return response
+
+            else:
+                form_data.update(
+                    passwordNew=bcrypt.generate_password_hash(
+                        form_data['passwordNew']).decode('utf-8'))
+                CmsUsers.query.filter_by(id=uid).update(
+                    {'password': form_data['passwordNew']})
+                db.session.commit()
+
+                response = Response(
+                    response=json.dumps({'type': 'success',
+                                         'text': 'Успешно обновлен пользователь \
+    с id='+str(uid)+'!',
+                                         'link': url_for('.get_user_by_id',
+                                                         uid=uid,
+                                                         _external=True)}),
+                    status=200,
+                    mimetype='application/json'
+                )
+
+                return response
+
+        #  elif 'avatarForm' in update_data:
+            #  print('avatar')
+        #  elif 'dataForm' in update_data:
+            #  print('data')
+        #  else:
+            #  print('nothing')
+
+    except Exception:
+
+        response = server_error(request.args.get("dbg"))
+
+    return "got"
 
 # ------------------------------------------------------------
 # Администрирование пользователей
 # ------------------------------------------------------------
+
 
 @API0.route('/users', methods=['GET'])
 @token_required

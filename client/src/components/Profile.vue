@@ -155,7 +155,7 @@
             :header-bg-variant="'danger'"
             :header-text-variant="'light'">
 
-      <b-form class="w-100">
+      <b-form class="w-100" @submit="onSubmitPassword">
 
         <b-form-group>
           <b-input-group>
@@ -168,9 +168,16 @@
             </b-input-group-prepend>
             <b-form-input
               v-bind:type="isActiveOld ? 'text' : 'password'"
+              v-bind:class="{ 'is-invalid': passwordError }"
+              name="passwordOld"
+              v-model="passwordUpdate.passwordOld"
               required
               placeholder="Старый пароль">
             </b-form-input>
+            <div class="invalid-feedback notation mt-2">
+              <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
+              size="1x" fixed-width /> {{errorMsg}}
+            </div>
           </b-input-group>
         </b-form-group>
 
@@ -186,7 +193,8 @@
             </b-input-group-prepend>
             <b-form-input
               v-bind:type="isActiveNew ? 'text' : 'password'"
-              v-model="passwordNew"
+              v-model="passwordUpdate.passwordNew"
+              name="passwordNew"
               readonly disabled
               placeholder="Новый пароль">
             </b-form-input>
@@ -199,14 +207,22 @@
         </b-form-group>
 
         <b-form-group id="form-read-group">
-          <b-form-checkbox name="passwordConfirm" v-model="passwordConfirm" required>
+          <b-form-checkbox name="passwordConfirm" required>
             <span class="notation noselect text-muted">Я подтверждаю смену пароля</span>
           </b-form-checkbox>
         </b-form-group>
 
-        <b-button type="submit" block variant="primary" title="Установить новый пароль">
+        <b-button class="mb-3" type="submit" block variant="primary" title="Установить новый пароль">
           <font-awesome-icon :icon="['fa', 'save']" fixed-width />
         </b-button>
+
+        <div class="row mx-auto pl-3 pr-3 pt-3 border-top">
+          <span class="text-danger notation text-center">
+              <font-awesome-icon :icon="['fa', 'exclamation-triangle']"
+              size="1x" fixed-width />
+  После сохранения, вы будете перенаправлены на страницу входа для повторной авторизации!
+          </span>
+        </div>
 
       </b-form>
     </b-modal>
@@ -260,6 +276,7 @@ import { ru } from 'vuejs-datepicker/dist/locale';
 import moment from 'moment';
 import { mapState } from 'vuex';
 import Breadcumbs from './Breadcumbs';
+import { EventBus } from '@/utils';
 
 export default {
   name: 'Profile',
@@ -273,10 +290,15 @@ export default {
       file: null,
       isActiveOld: false,
       isActiveNew: true,
-      passwordNew: '',
       passwordNewSize: 8,
-      passwordConfirm: false,
       imageData: '/static/profile_avatars/default.png',
+      passwordUpdate: {
+        passwordNew: '',
+        passwordOld: '',
+        login: this.$store.state.profile.login,
+      },
+      passwordError: false,
+      errorMsg: '',
     };
   },
   components: { Breadcumbs, Datepicker },
@@ -297,7 +319,7 @@ export default {
       for (let i = 0; i < this.passwordNewSize; i += 1) {
         password += CharacterSet.charAt(Math.floor(Math.random() * CharacterSet.length));
       }
-      this.passwordNew = password;
+      this.passwordUpdate.passwordNew = password;
     },
     onSelectImage() {
       const { files } = this.$refs.imageInput.$refs.input;
@@ -310,9 +332,25 @@ export default {
         this.$emit('input', files[0]);
       }
     },
+    onSubmitPassword(evt) {
+      evt.preventDefault();
+      this.passwordError = false;
+      this.$store.dispatch('passwordUpdateProfile', this.passwordUpdate);
+    },
   },
   computed: mapState({
     profile: state => state.profile,
   }),
+  mounted() {
+    EventBus.$on('failedAuthentication', (msg) => {
+      if (msg.field === 'password') {
+        this.passwordError = true;
+      }
+      this.errorMsg = msg.text;
+    });
+  },
+  beforeDestroy() {
+    EventBus.$off('failedAuthentication');
+  },
 };
 </script>

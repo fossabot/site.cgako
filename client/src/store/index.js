@@ -29,7 +29,7 @@ const actions = {
   logout(context) {
     context.commit('unsetJwtToken');
   },
-  // Загрузить пользователей
+  // Загрузить данные вошедшего пользователя
   loadProfile(context) {
     return axios.get(`/api/users/${context.state.uid}`, { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
       .then((response) => {
@@ -38,6 +38,17 @@ const actions = {
       .catch((error) => {
         // eslint-disable-next-line
         console.error(error);
+      });
+  },
+  // Обновить пароль вошедшего пользователя
+  passwordUpdateProfile(context, passwordUpdate) {
+    return axios.put(`/api/profile/${context.state.uid}`, { passwordForm: passwordUpdate }, { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
+      .then((response) => {
+        EventBus.$emit('logout');
+      })
+      .catch((error) => {
+        // eslint-disable-next-line
+        EventBus.$emit('failedAuthentication', error.response.data);
       });
   },
   // Загрузить пользователей
