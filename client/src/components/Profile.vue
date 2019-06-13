@@ -235,12 +235,18 @@
             :header-text-variant="'light'">
 
       <div class=" row w-100 mx-auto pb-3 justify-content-center align-items-center">
-        <img :src="'/static/profile_avatars/default.png'" alt="Предпросмотр средний квадрат"
+        <img v-bind:src="imageData ? imageData : '/static/profile_avatars/default.png'"
+        alt="Предпросмотр средний квадрат"
         class="profile-image-preview preview-md preview-square mr-4">
-        <img :src="'/static/profile_avatars/default.png'" alt="Предпросмотр средний"
+
+        <img v-bind:src="imageData ? imageData : '/static/profile_avatars/default.png'"
+        alt="Предпросмотр средний"
         class="profile-image-preview preview-md mr-4">
-        <img :src="'/static/profile_avatars/default.png'" alt="Предпросмотр маленький"
+
+        <img v-bind:src="imageData ? imageData : '/static/profile_avatars/default.png'"
+        alt="Предпросмотр маленький"
         class="profile-image-preview preview-sm mr-4">
+
       </div>
 
       <b-form class="w-100" @submit="onSubmitAvatar">
@@ -256,7 +262,6 @@
             placeholder="Выберите фотокарточку..."
             drop-placeholder="Бросьте сюда..."
             accept="image/jpeg, image/png, image/gif"
-
           ></b-form-file>
 
         </b-form-group>
@@ -270,7 +275,7 @@
           <span class="text-muted notation text-justify">
   Если хотите установить фотокарточку по умолчанию, оставьте поле пустым и нажмите сохранить.
           </span>
-        </div>{{imageData}}
+        </div>
 
       </b-form>
     </b-modal>
@@ -296,6 +301,7 @@ export default {
         from: new Date(),
       },
       imageData: '',
+      files: null,
       isActiveOld: false,
       isActiveNew: true,
       passwordNewSize: 8,
@@ -334,6 +340,7 @@ export default {
         const reader = new FileReader();
         reader.onload = (e) => {
           this.imageData = e.target.result;
+          this.file = files;
         };
         reader.readAsDataURL(files[0]);
         this.$emit('input', files[0]);
@@ -342,11 +349,16 @@ export default {
     onSubmitPassword(evt) {
       evt.preventDefault();
       this.passwordError = false;
-      this.$store.dispatch('updateProfile', { passwordForm: this.passwordUpdate });
+      this.$store.dispatch('updateProfilePassword', this.passwordUpdate);
     },
     onSubmitAvatar(evt) {
       evt.preventDefault();
-      this.$store.dispatch('updateProfile', { avatarForm: this.imageData });
+      const formData = new FormData();
+      console.log(this.file);
+      if (this.file) {
+        formData.append('avatar', this.file[0]);
+      }
+      this.$store.dispatch('updateProfileAvatar', formData);
     },
   },
   computed: mapState({

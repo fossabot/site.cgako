@@ -41,24 +41,31 @@ const actions = {
       });
   },
   // Обновить пароль вошедшего пользователя
-  updateProfile(context, dataUpdate) {
-    return axios.put(`/api/profile/${context.state.uid}`, dataUpdate,
-      { headers: { Authorization: `Bearer: ${context.state.jwt}` } }, {
+  updateProfilePassword(context, dataUpdate) {
+    return axios.put(`/api/profile/${context.state.uid}/password`, dataUpdate,
+      { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
+      .then(() => { EventBus.$emit('logout'); })
+      .catch((error) => {
+        // eslint-disable-next-line
+        EventBus.$emit('failedAuthentication', error.response.data);
+      });
+  },
+  // Обновить аватар вошедшего пользователя
+  updateProfileAvatar(context, dataUpdate) {
+    return axios.put(`/api/profile/${context.state.uid}/avatar`, dataUpdate,
+      {
+        headers: {
+          Authorization: `Bearer: ${context.state.jwt}`,
+        },
         onUploadProgress: (progressEvent) => {
           // eslint-disable-next-line
           console.log(progressEvent.loaded / progressEvent.total);
         },
       })
-      .then(() => {
-        if (dataUpdate.passwordForm) {
-          EventBus.$emit('logout');
-        } else {
-          EventBus.$emit('forceRerender');
-        }
-      })
+      .then(() => { context.dispatch('loadProfile'); EventBus.$emit('forceRerender'); })
       .catch((error) => {
         // eslint-disable-next-line
-        EventBus.$emit('failedAuthentication', error.response.data);
+        console.log(error);
       });
   },
   // Загрузить пользователей

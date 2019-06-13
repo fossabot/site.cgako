@@ -5,20 +5,15 @@
 Новости"""
 
 import jwt
-
 import traceback
-
 import uuid
-
-import base64
+#  import base64
+import os
 
 from datetime import datetime, timedelta
-
 from urllib.parse import urljoin
-
 from flask import current_app, json, Blueprint, \
     request, Response, url_for, abort
-
 from functools import wraps
 
 from app import bcrypt, db
@@ -203,75 +198,118 @@ def login():
 # ------------------------------------------------------------
 
 
-@API0.route('/profile/<int:uid>', methods=['PUT'])
+@API0.route('/profile/<int:uid>/password', methods=['PUT'])
 @token_required
-def update_profile(current_user, uid):
-    """ Изменение профиля пользователя"""
+def update_profile_password(current_user, uid):
+    """ Изменение пароля через профиль пользователя"""
 
     try:
 
         update_data = request.get_json()
-        #  print(update_data)
-        #  print(request.files)
-        #  print(request.form)
 
-        if 'passwordForm' in update_data:
+        auth_data = {'login': update_data['login'],
+                     'password': update_data['passwordOld']}
+        user = CmsUsers.authenticate(**auth_data)
 
-            form_data = update_data['passwordForm']
+        if not user[0]:
 
-            auth_data = {'login': form_data['login'],
-                         'password': form_data['passwordOld']}
-            user = CmsUsers.authenticate(**auth_data)
+            response = Response(
+                response=json.dumps({'type': 'error',
+                                     'text': user[1],
+                                     'field': user[2]}),
+                status=401,
+                mimetype='application/json'
+            )
 
-            if not user[0]:
+            return response
 
-                response = Response(
-                    response=json.dumps({'type': 'error',
-                                         'text': user[1],
-                                         'field': user[2]}),
-                    status=401,
-                    mimetype='application/json'
-                )
+        else:
+            update_data.update(
+                passwordNew=bcrypt.generate_password_hash(
+                    update_data['passwordNew']).decode('utf-8'))
+            CmsUsers.query.filter_by(id=uid).update(
+                {'password': update_data['passwordNew']})
+            db.session.commit()
 
-                return response
+            response = Response(
+                response=json.dumps({'type': 'success',
+                                     'text': 'Успешно обновлен пароль!',
+                                     'link': url_for('.get_user_by_id',
+                                                     uid=uid,
+                                                     _external=True)}),
+                status=200,
+                mimetype='application/json'
+            )
 
+            return response
+
+    except Exception:
+
+        response = server_error(request.args.get("dbg"))
+
+    return "got"
+
+
+@API0.route('/profile/<int:uid>/avatar', methods=['PUT'])
+@token_required
+def update_profile_avatar(current_user, uid):
+    """ Изменение аватара через профиль пользователя"""
+
+    try:
+        usr_query = CmsUsers.query.filter_by(id=uid)
+
+        if request.files.get('avatar'):
+            avatar_image = request.files['avatar']
+
+            if usr_query.first().photo:
+                img_extension = avatar_image.content_type.split('/')[1]
+                img_file_name = usr_query.first().photo.split('.')[0] + '.' + \
+                    img_extension
+                os.remove(os.path.join(
+                    current_app.config['CMS_USERS_AVATARS'],
+                    usr_query.first().photo))
             else:
-                form_data.update(
-                    passwordNew=bcrypt.generate_password_hash(
-                        form_data['passwordNew']).decode('utf-8'))
-                CmsUsers.query.filter_by(id=uid).update(
-                    {'password': form_data['passwordNew']})
-                db.session.commit()
+                img_extension = avatar_image.content_type.split('/')[1]
+                img_file_name = uuid.uuid1().hex + '.' + img_extension
 
-                response = Response(
-                    response=json.dumps({'type': 'success',
-                                         'text': 'Успешно обновлен пользователь \
-    с id='+str(uid)+'!',
-                                         'link': url_for('.get_user_by_id',
-                                                         uid=uid,
-                                                         _external=True)}),
-                    status=200,
-                    mimetype='application/json'
-                )
+            usr_query.update(
+                {'photo': img_file_name})
+            db.session.commit()
 
-                return response
+            avatar_image.save(
+                os.path.join(
+                    current_app.config['CMS_USERS_AVATARS'], img_file_name))
+        else:
+            os.remove(
+                os.path.join(
+                    current_app.config['CMS_USERS_AVATARS'],
+                    usr_query.first().photo))
+            usr_query.update(
+                {'photo': None})
+            db.session.commit()
 
-        if 'avatarForm' in update_data:
+        response = Response(
+            response=json.dumps({'type': 'success',
+                                 'text': 'Успешно обновлен аватар',
+                                 'link': url_for('.get_user_by_id',
+                                                 uid=uid,
+                                                 _external=True)}),
+            status=200,
+            mimetype='application/json'
+        )
 
-            img_data = update_data['avatarForm'].split(';')
-            img_enc_string = img_data[1].split(',')[1]
-            img_extension = img_data[0].split('/')[1]
-            img_file_name = uuid.uuid1().hex + '.' + img_extension
+        return response
 
-            with open(img_file_name, "wb") as fh:
-                fh.write(base64.decodebytes(
-                    bytes(img_enc_string, encoding='utf-8')
-                    ))
+        #  Запись файла в формате base64
+        #  img_data = update_data['avatarForm'].split(';')
+        #  img_enc_string = img_data[1].split(',')[1]
+        #  img_extension = img_data[0].split('/')[1]
+        #  img_file_name = uuid.uuid1().hex + '.' + img_extension
 
-        #  elif 'dataForm' in update_data:
-            #  print('data')
-        #  else:
-            #  print('nothing')
+        #  with open(img_file_name, "wb") as fh:
+        #  fh.write(base64.decodebytes(
+        #  bytes(img_enc_string, encoding='utf-8')
+        #  ))
 
     except Exception:
 

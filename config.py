@@ -12,6 +12,7 @@ JSON_AS_ASCII = False
 
 # Базовая директория
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
+CMS_USERS_AVATARS = os.path.join(BASEDIR, 'client/static/profile_avatars/')
 
 # Соединение с БД
 SQLALCHEMY_BASIC_URI = 'mysql+pymysql://cgako_administrator:tester@localhost/'

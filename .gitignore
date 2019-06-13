@@ -1,6 +1,7 @@
 # SITE SPECIFIC
 migrations/
 client/static/
+.Trash-1000
 
 # Geany files
 *.geany
