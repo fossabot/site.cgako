@@ -10,6 +10,8 @@ import traceback
 
 import uuid
 
+import base64
+
 from datetime import datetime, timedelta
 
 from urllib.parse import urljoin
@@ -209,6 +211,9 @@ def update_profile(current_user, uid):
     try:
 
         update_data = request.get_json()
+        #  print(update_data)
+        #  print(request.files)
+        #  print(request.form)
 
         if 'passwordForm' in update_data:
 
@@ -251,8 +256,18 @@ def update_profile(current_user, uid):
 
                 return response
 
-        #  elif 'avatarForm' in update_data:
-            #  print('avatar')
+        if 'avatarForm' in update_data:
+
+            img_data = update_data['avatarForm'].split(';')
+            img_enc_string = img_data[1].split(',')[1]
+            img_extension = img_data[0].split('/')[1]
+            img_file_name = uuid.uuid1().hex + '.' + img_extension
+
+            with open(img_file_name, "wb") as fh:
+                fh.write(base64.decodebytes(
+                    bytes(img_enc_string, encoding='utf-8')
+                    ))
+
         #  elif 'dataForm' in update_data:
             #  print('data')
         #  else:
@@ -334,7 +349,7 @@ def post_users(current_user):
     """ Добавление записи пользователя в БД"""
 
     try:
-        #  hashname = uuid.uuid4().hex + '.' + photo.filename.rsplit('.', 1)[1]
+
         post_data = request.get_json()
 
         exist = CmsUsers.query.filter(

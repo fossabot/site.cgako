@@ -212,7 +212,8 @@
           </b-form-checkbox>
         </b-form-group>
 
-        <b-button class="mb-3" type="submit" block variant="primary" title="Установить новый пароль">
+        <b-button class="mb-3" type="submit"
+        block variant="primary" title="Установить новый пароль">
           <font-awesome-icon :icon="['fa', 'save']" fixed-width />
         </b-button>
 
@@ -234,15 +235,15 @@
             :header-text-variant="'light'">
 
       <div class=" row w-100 mx-auto pb-3 justify-content-center align-items-center">
-        <img :src="imageData" alt="Предпросмотр средний квадрат"
+        <img :src="'/static/profile_avatars/default.png'" alt="Предпросмотр средний квадрат"
         class="profile-image-preview preview-md preview-square mr-4">
-        <img :src="imageData" alt="Предпросмотр средний"
+        <img :src="'/static/profile_avatars/default.png'" alt="Предпросмотр средний"
         class="profile-image-preview preview-md mr-4">
-        <img :src="imageData" alt="Предпросмотр маленький"
+        <img :src="'/static/profile_avatars/default.png'" alt="Предпросмотр маленький"
         class="profile-image-preview preview-sm mr-4">
       </div>
 
-      <b-form class="w-100">
+      <b-form class="w-100" @submit="onSubmitAvatar">
 
         <b-form-group
         description="Товарищам будет проще узнать Вас, если Вы вклеите свою настоящую фотокарточку.
@@ -252,17 +253,24 @@
             ref="imageInput"
             @input="onSelectImage"
             lang="ru"
-            v-model="file"
             placeholder="Выберите фотокарточку..."
             drop-placeholder="Бросьте сюда..."
             accept="image/jpeg, image/png, image/gif"
+
           ></b-form-file>
 
         </b-form-group>
 
-        <b-button type="submit" block variant="primary" title="Установить новую фотокарточку">
+        <b-button class="mb-3" type="submit" block variant="primary"
+        title="Установить новую фотокарточку">
           <font-awesome-icon :icon="['fa', 'save']" fixed-width />
         </b-button>
+
+        <div class="row mx-auto pl-3 pr-3 pt-3 border-top">
+          <span class="text-muted notation text-justify">
+  Если хотите установить фотокарточку по умолчанию, оставьте поле пустым и нажмите сохранить.
+          </span>
+        </div>{{imageData}}
 
       </b-form>
     </b-modal>
@@ -287,11 +295,10 @@ export default {
       disabledDates: {
         from: new Date(),
       },
-      file: null,
+      imageData: '',
       isActiveOld: false,
       isActiveNew: true,
       passwordNewSize: 8,
-      imageData: '/static/profile_avatars/default.png',
       passwordUpdate: {
         passwordNew: '',
         passwordOld: '',
@@ -335,7 +342,11 @@ export default {
     onSubmitPassword(evt) {
       evt.preventDefault();
       this.passwordError = false;
-      this.$store.dispatch('passwordUpdateProfile', this.passwordUpdate);
+      this.$store.dispatch('updateProfile', { passwordForm: this.passwordUpdate });
+    },
+    onSubmitAvatar(evt) {
+      evt.preventDefault();
+      this.$store.dispatch('updateProfile', { avatarForm: this.imageData });
     },
   },
   computed: mapState({

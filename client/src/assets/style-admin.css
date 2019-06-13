@@ -396,6 +396,11 @@ h3 {
 .input-group > .input-group-append:not(:last-child) > .input-group-text,
 .input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle),
 .input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.input-group > .input-group-append:not(:last-child) > .btn:last-child,
+.input-group > .input-group-append:not(:last-child) > .input-group-text:last-child {
     border-top-right-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
 }

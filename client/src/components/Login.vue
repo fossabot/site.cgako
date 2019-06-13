@@ -28,11 +28,18 @@
                             type="text" class="form-control"
                             required autofocus>
                             <input v-model="password" v-bind:class="{ 'is-invalid': passwordError }"
+                            v-bind:type="isActivePassword ? 'text' : 'password'"
                             placeholder="Пароль" aria-label="Password"
-                            type="password" class="form-control"
+                            class="form-control"
                             required>
 
                             <div class="input-group-append">
+                                <b-button variant="outline-secondary"
+                                v-on:click='isActivePassword = !isActivePassword'>
+                                  <font-awesome-icon fixed-width
+                                  v-bind:icon="isActivePassword?['far','eye-slash']:['far', 'eye']"
+                                  v-bind:title="isActivePassword ? 'Скрыть' : 'Показать'"/>
+                                </b-button>
                                 <button class="btn btn-primary" type="submit"
                                 :disabled="disableButton">
                                     <font-awesome-icon :icon="['fa', 'sign-in-alt']" fixed-width />
@@ -102,6 +109,7 @@ export default {
       userError: false,
       passwordError: false,
       errorMsg: '',
+      isActivePassword: false,
     };
   },
   methods: {

@@ -41,10 +41,20 @@ const actions = {
       });
   },
   // Обновить пароль вошедшего пользователя
-  passwordUpdateProfile(context, passwordUpdate) {
-    return axios.put(`/api/profile/${context.state.uid}`, { passwordForm: passwordUpdate }, { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
-      .then((response) => {
-        EventBus.$emit('logout');
+  updateProfile(context, dataUpdate) {
+    return axios.put(`/api/profile/${context.state.uid}`, dataUpdate,
+      { headers: { Authorization: `Bearer: ${context.state.jwt}` } }, {
+        onUploadProgress: (progressEvent) => {
+          // eslint-disable-next-line
+          console.log(progressEvent.loaded / progressEvent.total);
+        },
+      })
+      .then(() => {
+        if (dataUpdate.passwordForm) {
+          EventBus.$emit('logout');
+        } else {
+          EventBus.$emit('forceRerender');
+        }
       })
       .catch((error) => {
         // eslint-disable-next-line
