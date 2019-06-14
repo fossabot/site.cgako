@@ -49,9 +49,9 @@
             <b-nav-item-dropdown right class="navbar-pictogram">
                 <template slot="button-content">
                     <b-img v-if="profile.photo" :src="'/static/profile_avatars/'+profile.photo"
-                    rounded="circle" alt="Фотокарточка" class="w-100"></b-img>
+                    rounded="circle" alt="Фотокарточка" class="w-100 h-100"></b-img>
                     <b-img v-else :src="'/static/profile_avatars/default.png'"
-                    rounded="circle" alt="Фотокарточка" class="w-100"></b-img>
+                    rounded="circle" alt="Фотокарточка" class="w-100 h-100"></b-img>
                 </template>
                 <b-dropdown-item :to="{ name: 'UserProfile' }">
                     <font-awesome-icon :icon="['fa', 'user-circle']"

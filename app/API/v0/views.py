@@ -198,6 +198,60 @@ def login():
 # ------------------------------------------------------------
 
 
+@API0.route('/profile/<int:uid>/data', methods=['PUT'])
+@token_required
+def update_profile_data(current_user, uid):
+    """ Изменение данных пользователя через профиль"""
+
+    try:
+
+        update_data = request.get_json()
+
+        check = CmsUsers.query.filter(
+            ((CmsUsers.login == update_data['login']) |
+             (CmsUsers.email == update_data['email']) |
+             (CmsUsers.phone == update_data["phone"])) &
+            (CmsUsers.id != uid)).first()
+
+        if check:
+
+            error_data = ''
+
+            if check.login == update_data['login']:
+                error_data = error_data + "логином"
+            if check.email == update_data['email']:
+                error_data = error_data + " / email"
+            if check.phone == update_data['phone']:
+                error_data = error_data + " / телефоном"
+
+            response = Response(
+                response=json.dumps({'type': 'danger',
+                                     'text': 'Пользователь с такими '+error_data+' \
+существует!'}),
+                status=422,
+                mimetype='application/json'
+            )
+        else:
+            CmsUsers.query.filter_by(id=uid).update(update_data)
+            db.session.commit()
+
+            response = Response(
+                response=json.dumps({'type': 'success',
+                                     'text': 'Данные профиля обновлены!',
+                                     'link': url_for('.get_user_by_id',
+                                                     uid=uid,
+                                                     _external=True)}),
+                status=200,
+                mimetype='application/json'
+            )
+
+    except Exception:
+
+        response = server_error(request.args.get("dbg"))
+
+    return response
+
+
 @API0.route('/profile/<int:uid>/password', methods=['PUT'])
 @token_required
 def update_profile_password(current_user, uid):

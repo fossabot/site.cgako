@@ -11,7 +11,7 @@
           <h3 slot="header" class="mb-0">Форма редактирования профиля</h3>
           <b-card-text class="text-center">
 
-            <b-form>
+            <b-form @submit="onSubmitData">
 
               <b-form-group
                 description="Допустимые символы:">
@@ -77,7 +77,7 @@
 
             </b-form>
 
-            <b-button type="submit" variant="danger" class="float-right"
+            <b-button variant="danger" class="float-right"
             @click="passwordGenerator" v-b-modal.password-modal>
               <font-awesome-icon :icon="['fa', 'key']" fixed-width />
             </b-button>
@@ -266,13 +266,19 @@
 
         </b-form-group>
 
+        <b-progress v-if="isActiveProgress" :max="100" show-progress animated class="mb-3">
+          <b-progress-bar :value="progressValue"
+          :label="`${((progressValue / progressMax) * 100).toFixed(2)}%`">
+          </b-progress-bar>
+        </b-progress>
+
         <b-button class="mb-3" type="submit" block variant="primary"
         title="Установить новую фотокарточку">
           <font-awesome-icon :icon="['fa', 'save']" fixed-width />
         </b-button>
 
         <div class="row mx-auto pl-3 pr-3 pt-3 border-top">
-          <span class="text-muted notation text-justify">
+          <span class="notation text-justify text-info">
   Если хотите установить фотокарточку по умолчанию, оставьте поле пустым и нажмите сохранить.
           </span>
         </div>
@@ -302,6 +308,7 @@ export default {
       },
       imageData: '',
       files: null,
+      isActiveProgress: false,
       isActiveOld: false,
       isActiveNew: true,
       passwordNewSize: 8,
@@ -346,6 +353,12 @@ export default {
         this.$emit('input', files[0]);
       }
     },
+    onSubmitData(evt) {
+      evt.preventDefault();
+      this.profile.last_login = moment(this.profile.last_login).format('YYYY-MM-DD HH:mm:ss');
+      this.profile.birth_date = moment(this.profile.birth_date).format('YYYY-MM-DD');
+      this.$store.dispatch('updateProfileData', this.profile);
+    },
     onSubmitPassword(evt) {
       evt.preventDefault();
       this.passwordError = false;
@@ -354,15 +367,17 @@ export default {
     onSubmitAvatar(evt) {
       evt.preventDefault();
       const formData = new FormData();
-      console.log(this.file);
       if (this.file) {
         formData.append('avatar', this.file[0]);
       }
+      this.isActiveProgress = true;
       this.$store.dispatch('updateProfileAvatar', formData);
     },
   },
   computed: mapState({
     profile: state => state.profile,
+    progressValue: state => state.uploadProgress,
+    progressMax: state => state.uploadProgressMax,
   }),
   mounted() {
     EventBus.$on('failedAuthentication', (msg) => {

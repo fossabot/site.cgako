@@ -12,6 +12,8 @@ const state = {
   users: [],
   profile: { socials: '' },
   uid: '',
+  uploadProgress: 0,
+  uploadProgressMax: 100,
   jwt: localStorage.getItem('token') || '', // Загрузить токен из хранилища, или инициировать пустой, если нет в хранилище
 };
 
@@ -40,6 +42,19 @@ const actions = {
         console.error(error);
       });
   },
+  // Обновить данные профиля вошедшего пользователя
+  updateProfileData(context, dataUpdate) {
+    return axios.put(`/api/profile/${context.state.uid}/data?dbg`, dataUpdate,
+      { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
+      .then((response) => {
+        context.dispatch('loadProfile');
+        EventBus.$emit('forceRerender');
+        EventBus.$emit('message', response.data);
+      })
+      .catch((error) => {
+        EventBus.$emit('message', error.response.data);
+      });
+  },
   // Обновить пароль вошедшего пользователя
   updateProfilePassword(context, dataUpdate) {
     return axios.put(`/api/profile/${context.state.uid}/password`, dataUpdate,
@@ -59,10 +74,14 @@ const actions = {
         },
         onUploadProgress: (progressEvent) => {
           // eslint-disable-next-line
-          console.log(progressEvent.loaded / progressEvent.total);
+          state.uploadProgress = (progressEvent.loaded / progressEvent.total)*100;
         },
       })
-      .then(() => { context.dispatch('loadProfile'); EventBus.$emit('forceRerender'); })
+      .then(() => {
+        context.dispatch('loadProfile');
+        state.uploadProgress = 0;
+        EventBus.$emit('forceRerender');
+      })
       .catch((error) => {
         // eslint-disable-next-line
         console.log(error);
