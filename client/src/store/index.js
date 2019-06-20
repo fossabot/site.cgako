@@ -77,10 +77,11 @@ const actions = {
           state.uploadProgress = (progressEvent.loaded / progressEvent.total)*100;
         },
       })
-      .then(() => {
+      .then((response) => {
         context.dispatch('loadProfile');
         state.uploadProgress = 0;
         EventBus.$emit('forceRerender');
+        EventBus.$emit('message', response.data);
       })
       .catch((error) => {
         // eslint-disable-next-line

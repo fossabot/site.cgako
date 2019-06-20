@@ -1,5 +1,5 @@
 <template>
-    <footer class="row mt-5 mx-auto w-100">
+    <footer class="row mx-auto w-100">
       <span class="caption p-3">
         <a href="https://ru.wikipedia.org/wiki/Авторское_право" title="Авторское право">
           <font-awesome-icon :icon="['far', 'copyright']" fixed-width size="1x"/>
@@ -21,7 +21,7 @@
       </span>
       <b-alert :show="dismissCountDown" @dismiss-count-down="countDownChanged"
       :variant="msgType" fade
-      class="message w-100 h-100 text-center m-0 justify-content-center align-items-center">
+      class="message w-100 text-center m-0 justify-content-center align-items-center">
         {{msgText}}
       </b-alert>
     </footer>
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     countDownChanged(dismissCountDown) {
-      this.dismissCountDown = dismissCountDown
+      this.dismissCountDown = dismissCountDown;
     },
   },
 };

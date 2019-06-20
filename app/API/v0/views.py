@@ -344,7 +344,7 @@ def update_profile_avatar(current_user, uid):
 
         response = Response(
             response=json.dumps({'type': 'success',
-                                 'text': 'Успешно обновлен аватар',
+                                 'text': 'Успешно обновлен аватар!',
                                  'link': url_for('.get_user_by_id',
                                                  uid=uid,
                                                  _external=True)}),

@@ -1,10 +1,10 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import 'bootstrap/dist/css/bootstrap.css';
-import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+import 'vue-tel-input/dist/vue-tel-input.css';
 
 import BootstrapVue from 'bootstrap-vue';
-import VuePhoneNumberInput from 'vue-phone-number-input';
+import Vuelidate from 'vuelidate';
 
 // Импортирование fontawesome и отдельных иконок из него
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -38,11 +38,13 @@ library.add(faTrash, faPencilAlt, faInfo, faPlus, faPowerOff,
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-layers-text', FontAwesomeLayersText);
-Vue.component('vue-phone-number-input', VuePhoneNumberInput);
+
 
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
+
+Vue.use(Vuelidate);
 
 // Объявление moment.js с русской локалью
 const moment = require('moment');
