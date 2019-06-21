@@ -216,7 +216,7 @@
               </b-form-group>
 
               <b-button type="submit" variant="primary" class="float-left"
-              :disabled="$v.profile.$invalid">
+              :disabled="!$v.profile.$anyDirty || $v.profile.$invalid">
                 <font-awesome-icon :icon="['fa', 'save']" fixed-width />
               </b-button>
 
@@ -315,8 +315,7 @@
               v-bind:type="isActiveOld ? 'text' : 'password'"
               v-bind:class="{ 'is-invalid': passwordError }"
               name="passwordOld"
-              v-model="passwordUpdate.passwordOld"
-              required
+              v-model="$v.passwordUpdate.passwordOld.$model"
               placeholder="Старый пароль">
             </b-form-input>
             <div class="invalid-feedback notation mt-2">
@@ -359,7 +358,8 @@
         </b-form-group>
 
         <b-button class="mb-3" type="submit"
-        block variant="primary" title="Установить новый пароль">
+        block variant="primary" title="Установить новый пароль"
+        :disabled="$v.passwordUpdate.$invalid">
           <font-awesome-icon :icon="['fa', 'save']" fixed-width />
         </b-button>
 
@@ -381,15 +381,18 @@
             :header-text-variant="'light'">
 
       <div class=" row w-100 mx-auto pb-3 justify-content-center align-items-center">
-        <img v-bind:src="imageData ? imageData : '/static/profile_avatars/default.png'"
+        <img v-bind:src="imageUpdate.imageData ?
+        imageUpdate.imageData : '/static/profile_avatars/default.png'"
         alt="Предпросмотр средний квадрат"
         class="profile-image-preview preview-md preview-square mr-4">
 
-        <img v-bind:src="imageData ? imageData : '/static/profile_avatars/default.png'"
+        <img v-bind:src="imageUpdate.imageData ?
+        imageUpdate.imageData : '/static/profile_avatars/default.png'"
         alt="Предпросмотр средний"
         class="profile-image-preview preview-md mr-4">
 
-        <img v-bind:src="imageData ? imageData : '/static/profile_avatars/default.png'"
+        <img v-bind:src="imageUpdate.imageData ?
+        imageUpdate.imageData : '/static/profile_avatars/default.png'"
         alt="Предпросмотр маленький"
         class="profile-image-preview preview-sm mr-4">
 
@@ -399,7 +402,8 @@
 
         <b-form-group
         description="Товарищам будет проще узнать Вас, если Вы вклеите свою настоящую фотокарточку.
-Она должна соответствовать ГОСТам ДЖиПег, ГиФ или ПэНГэ.">
+Она должна соответствовать ГОСТам ДЖиПег, ГиФ или ПэНГэ.
+Если хотите установить фотокарточку по умолчанию, оставьте поле пустым и нажмите сохранить.">
 
           <b-form-file
             ref="imageInput"
@@ -408,27 +412,39 @@
             placeholder="Выберите фотокарточку..."
             drop-placeholder="Бросьте сюда..."
             accept="image/jpeg, image/png, image/gif"
+            :state="$v.imageUpdate.$dirty ? !$v.imageUpdate.$anyError : null"
           ></b-form-file>
-
+          <b-form-invalid-feedback
+          :state="$v.imageUpdate.$dirty ? !$v.imageUpdate.$anyError : null">
+            <span v-if="!$v.imageUpdate.size.maxValue">
+              Превышен лимит в 3 МБ для фотокарточки!
+            </span>
+            <span v-if="!$v.imageUpdate.type.isImage">
+              Фотокарточка не соответствует ГОСТам ДЖиПег, ГиФ или ПэНГэ!
+            </span>
+          </b-form-invalid-feedback>
+          <b-form-valid-feedback
+          :state="$v.imageUpdate.$dirty ? !$v.imageUpdate.$anyError : null">
+            Все в порядке!
+          </b-form-valid-feedback>
         </b-form-group>
 
-        <b-progress v-if="isActiveProgress" :max="100" show-progress animated class="mb-3">
-          <b-progress-bar :value="progressValue"
-          :label="`${((progressValue / progressMax) * 100).toFixed(2)}%`">
-          </b-progress-bar>
-        </b-progress>
-
         <b-button class="mb-3" type="submit" block variant="primary"
-        title="Установить новую фотокарточку">
+        title="Установить новую фотокарточку"
+        :disabled="$v.imageUpdate.$invalid">
           <font-awesome-icon :icon="['fa', 'save']" fixed-width />
         </b-button>
 
-        <div class="row mx-auto pl-3 pr-3 pt-3 border-top">
-          <span class="notation text-justify text-info">
-  Если хотите установить фотокарточку по умолчанию, оставьте поле пустым и нажмите сохранить.
-          </span>
+        <div class="row mx-auto pt-3 border-top">
+          <b-progress v-if="isActiveProgress" :max="100" show-progress animated class="w-100">
+            <b-progress-bar :value="progressValue" variant="success"
+            :label="`${((progressValue / progressMax) * 100).toFixed(2)}%`">
+            </b-progress-bar>
+            <b-progress-bar :value="preloadValue" variant="primary"
+            :label="`${preloadValue.toFixed(2)}%`">
+            </b-progress-bar>
+          </b-progress>
         </div>
-
       </b-form>
     </b-modal>
 
@@ -442,10 +458,11 @@ import { ru } from 'vuejs-datepicker/dist/locale';
 import moment from 'moment';
 import { mapState } from 'vuex';
 import {
-  required, minLength, maxLength, alphaNum, email,
+  required, minLength, maxLength, alphaNum, email, maxValue,
 } from 'vuelidate/lib/validators';
 import Breadcumbs from './Breadcumbs';
-import { EventBus, passwordGenerator } from '@/utils';
+import { EventBus, passwordGenerator, formatBytes } from '@/utils';
+import { imageType } from '@/validators';
 
 export default {
   name: 'Profile',
@@ -456,8 +473,8 @@ export default {
       disabledDates: {
         from: new Date(),
       },
-      imageData: '',
       files: null,
+      preloadValue: 0,
       isActiveProgress: false,
       isActiveOld: false,
       isActiveNew: true,
@@ -466,6 +483,11 @@ export default {
         passwordNew: '',
         passwordOld: '',
         login: this.$store.state.profile.login,
+      },
+      imageUpdate: {
+        type: '',
+        size: 0,
+        imageData: '',
       },
       passwordError: false,
       errorMsg: '',
@@ -514,6 +536,19 @@ export default {
       },
       validationGroupFIO: ['profile.name', 'profile.surname', 'profile.patronymic'],
     },
+    passwordUpdate: {
+      passwordOld: {
+        required,
+      },
+    },
+    imageUpdate: {
+      size: {
+        maxValue: maxValue(3),
+      },
+      type: {
+        isImage: imageType,
+      },
+    },
   },
   components: { Breadcumbs, Datepicker, VueTelInput },
   methods: {
@@ -524,9 +559,18 @@ export default {
       const { files } = this.$refs.imageInput.$refs.input;
       if (files && files[0]) {
         const reader = new FileReader();
+        reader.onprogress = (e) => {
+          if (e.lengthComputable) {
+            this.isActiveProgress = true;
+            this.preloadValue = Math.round((e.loaded / e.total) * 100);
+          }
+        };
         reader.onload = (e) => {
-          this.imageData = e.target.result;
+          this.imageUpdate.imageData = e.target.result;
           this.file = files;
+          this.imageUpdate.size = formatBytes(files[0].size, 2, 2).number;
+          this.imageUpdate.type = files[0].type;
+          this.$v.imageUpdate.$touch();
         };
         reader.readAsDataURL(files[0]);
         this.$emit('input', files[0]);

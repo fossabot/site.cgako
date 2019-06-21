@@ -163,7 +163,7 @@ def login():
 
             return response
 
-        today = datetime.utcnow()
+        today = datetime.now()
         token_duration = current_app.config['TOKEN_DURATION']
         day_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
         day_end = day_start + timedelta(
@@ -175,6 +175,9 @@ def login():
                             'exp': day_end
                            },
                            current_app.config['SECRET_KEY'])
+
+        CmsUsers.query.filter_by(id=user[0].id).update({'last_login': today})
+        db.session.commit()
 
         #  test = jwt.decode(token, current_app.config['SECRET_KEY'])
         #  print(test)

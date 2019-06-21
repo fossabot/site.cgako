@@ -2,6 +2,7 @@ import Vue from 'vue';
 
 export const EventBus = new Vue();
 
+// Проверка валидности токена по срокам и по структуре
 export function isValidJwt(jwt) {
   if (!jwt || jwt.split('.').length < 3) {
     return false;
@@ -12,6 +13,7 @@ export function isValidJwt(jwt) {
   return now < exp;
 }
 
+// Получение кода текущего пользователя из токена
 export function currentUserLogin(jwt) {
   if (!jwt || jwt.split('.').length < 3) {
     return false;
@@ -20,6 +22,7 @@ export function currentUserLogin(jwt) {
   return data.uid;
 }
 
+// Фукнция генерации пароля (необходимо модифицировать для указаний модификаций)
 export function passwordGenerator() {
   const alphabet = 'abcdefghijklmnopqrstuvwxyz';
   const alphabetUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -35,4 +38,22 @@ export function passwordGenerator() {
   }
 
   return password;
+}
+
+// Форматирование байтов в другие размеры
+export function formatBytes(bytes, decimals = 2, power = null) {
+  if (bytes === 0) return { number: 0, measure: 'Bytes' };
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  let i = 0;
+
+  if (power) {
+    i = power;
+  } else {
+    i = Math.floor(Math.log(bytes) / Math.log(k));
+  }
+
+  return { number: parseFloat((bytes / (k ** i)).toFixed(dm)), measure: sizes[i] };
 }
