@@ -6,3 +6,8 @@ export function imageType(value) {
 
   return mimes.includes(value);
 }
+
+export function another(value) {
+  if (!value) return true;
+  return true;
+}

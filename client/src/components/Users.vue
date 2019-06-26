@@ -7,16 +7,16 @@
       </button>
     </div>
     <div class="row-fluid pb-3">
-      <table class="table table-hover">
+      <table class="table table-hover td-align-middle">
         <thead>
-          <tr>
+          <tr class="text-center">
             <th><input type="checkbox" v-model="selectAll" @click="select"></th>
             <th></th>
             <th scope="col">Пользователь</th>
             <th scope="col">Роль</th>
             <th scope="col">Фотокарточка</th>
             <th scope="col">Cоц. сети</th>
-            <th scope="col">Последний логин</th>
+            <th scope="col">Последний вход</th>
             <th></th>
           </tr>
         </thead>
@@ -30,17 +30,25 @@
               fixed-width title="Отключить учетную запись" />
             </td>
             <!-- eslint-disable-next-line -->
-            <td v-bind:title="user.surname+' '+user.name+' '+user.patronymic">{{user.surname}} {{user.name.charAt(0)}}.{{user.patronymic.charAt(0)}}.<br> {{user.login}}</td>
+            <td v-bind:title="user.surname+' '+user.name+' '+user.patronymic">{{user.surname}} {{user.name.charAt(0)}}.{{user.patronymic.charAt(0)}}.<br> @{{user.login}}</td>
             <td>Администратор</td>
-            <td>{{user.photo}}</td>
+            <td>
+              <div class="card-profile-image mx-auto">
+                <img v-if="user.photo" :src="'/static/profile_avatars/'+user.photo"
+                alt="Фотокарточка" class="profile-image">
+                <img v-else :src="'/static/profile_avatars/default.png'"
+                alt="Фотокарточка" class="profile-image">
+              </div>
+            </td>
             <td>
               <font-awesome-icon :icon="['fab', 'vk']" fixed-width />
               <font-awesome-icon :icon="['fab', 'odnoklassniki']" fixed-width />
               <font-awesome-icon :icon="['fab', 'yandex']" fixed-width />
               <font-awesome-icon :icon="['fab', 'google']" fixed-width />
             </td>
-            <td v-bind:title="user.last_login | moment('dddd, MMMM Do YYYY, HH:mm:ss a')">
-              {{user.last_login | moment("from")}}
+            <td v-bind:title="user.last_login |
+            moment('subtract', '3 hours', 'dddd, MMMM Do YYYY, HH:mm:ss')">
+              {{user.last_login | moment('subtract', '3 hours', 'from')}}
             </td>
             <td>
               <button type="button" title="Изменить запись"
@@ -68,7 +76,7 @@ import { mapState } from 'vuex';
 import Breadcumbs from './Breadcumbs';
 
 export default {
-  name: 'DataTable',
+  name: 'Users',
   data() {
     return {
       selected: [],

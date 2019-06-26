@@ -21,7 +21,7 @@
 
       <b-collapse id="collapse-site" class="noselect">
         <b-list-group class="">
-            <router-link :to="{ name: 'UsersDataTable' }">
+            <router-link :to="{ name: 'Users' }">
               <b-list-group-item class="noselect">
                 <span class="ml-4">
                   <font-awesome-icon :icon="['fa', 'user']" class="" fixed-width size="1x"/>
@@ -39,6 +39,9 @@
       </b-collapse>
 
       <b-list-group-item class="noselect" disabled>
+        <div class="blocker" style="top: 0; bottom:0">
+          <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
+        </div>
         <font-awesome-icon :icon="['fa', 'folder']" class="pr-3" fixed-width size="2x"/>
         Медиа
       </b-list-group-item>

@@ -78,6 +78,32 @@
                       supported by Chrome and Opera */
 }
 
+table.table.td-align-middle td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+/*
+---------------------------- Блокиратор -----------------------------
+*/
+.blocker {
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4) 10px, rgba(0, 0, 0, 0.4) 10px, rgba(0, 0, 0, 0.4) 20px);
+  color: black;
+  font-size: 1.5rem;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 2;
+}
 /*
 ---------------------------- Скроллбар -----------------------------
 */
@@ -279,6 +305,7 @@ footer {
   bottom: 0;
   transition: .2s all cubic-bezier(.4,0,.2,1);
   border-top: 1px solid rgb(224, 224, 224);
+  z-index: 99;
 }
 
 footer.shifted {
@@ -717,7 +744,7 @@ article.profile-card h2 {
   font-weight: 900;
 }
 
-.profile-card .card-profile-image {
+.profile-card .card-profile-image, .card-profile-image  {
   border-radius: 100%;
   display: flex;
   justify-content: center;
@@ -727,7 +754,7 @@ article.profile-card h2 {
   height: 7rem;
 }
 
-article.profile-card img.profile-image {
+article.profile-card img.profile-image, img.profile-image {
   border: 5px solid #ced4da;
   position: relative;
   border-radius: 50%;
@@ -809,3 +836,4 @@ img.profile-image-preview.preview-square {
     -webkit-box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }
+

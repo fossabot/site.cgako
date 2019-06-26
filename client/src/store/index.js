@@ -33,7 +33,7 @@ const actions = {
   },
   // Загрузить данные вошедшего пользователя
   loadProfile(context) {
-    return axios.get(`/api/users/${context.state.uid}`, { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
+    return axios.get(`/api/profile/${context.state.uid}`, { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
       .then((response) => {
         context.commit('setProfile', { profile: response.data });
       })

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import NProgress from 'nprogress';
-import DataTable from '@/components/DataTable';
+import Users from '@/components/Users';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
 import AdminPanel from '@/components/AdminPanel';
@@ -36,8 +36,8 @@ const router = new Router({
         },
         {
           path: 'users',
-          name: 'UsersDataTable',
-          component: DataTable,
+          name: 'Users',
+          component: Users,
           meta: {
             requiresAuth: true,
             breadCrumb: 'Пользователи',

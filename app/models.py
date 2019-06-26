@@ -57,7 +57,10 @@ class CmsUsers(db.Model):
         """Конструктор класса."""
         self.login = login
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
-        self.socials = { "ok": "", "vk": "", "google": "", "yandex": "" } if socials is None else socials
+        self.socials = {"ok": "",
+                        "vk": "",
+                        "google": "",
+                        "yandex": ""} if socials is None else socials
         self.photo = None if photo is None else photo
         self.name = name
         self.surname = surname
@@ -80,9 +83,11 @@ class CmsUsers(db.Model):
         password = kwargs.get('password')
 
         if not login or not password:
-            return (None, 'Не переданы данные для аутентификации пользователя!', 'empty')
+            return (None, 'Не переданы данные\
+        для аутентификации пользователя!', 'empty')
 
-        user = cls.query.filter((cls.login == login) | (cls.email == login)).first()
+        user = cls.query.filter((cls.login == login) |
+                                (cls.email == login)).first()
 
         if not user:
             return (None, 'Пользователь не найден!', 'username')
@@ -90,6 +95,25 @@ class CmsUsers(db.Model):
             return (None, 'Неверный пароль!', 'password')
 
         return (user, 'Успешно!')
+
+    @classmethod
+    def exist(cls, sid=None, **kwargs):
+        """Проверка существования пользователя с данными в базе"""
+
+        if sid is None:
+            exist = cls.query.filter(
+                    (cls.login == kwargs.get('login')) |
+                    (cls.email == kwargs.get('email')) |
+                    (cls.phone == kwargs.get('phone'))).first()
+        else:
+            exist = cls.query.filter(
+                    ((cls.login == kwargs.get('login')) |
+                     (cls.email == kwargs.get('email')) |
+                     (cls.phone == kwargs.get('phone'))) &
+                    (cls.id != sid)).first()
+        if exist:
+            return True
+        return False
 
 
 class CmsUsersSchema(ma.ModelSchema):
@@ -99,3 +123,14 @@ class CmsUsersSchema(ma.ModelSchema):
         """Мета модели, вносятся доп. параметры."""
 
         model = CmsUsers
+
+
+class CmsProfileSchema(ma.ModelSchema):
+    """Marshmallow-схема для перегона модели в json формат."""
+
+    class Meta:
+        """Мета модели, вносятся доп. параметры."""
+
+        model = CmsUsers
+        fields = ("login", "surname", "name", "patronymic", "email", "phone",
+                  "birth_date", "about_me", "socials", "photo")

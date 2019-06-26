@@ -16,6 +16,9 @@
         <b-collapse id="nav-collapse" is-nav>
             <b-nav-form>
                 <b-input-group class="mr-sm-2">
+                    <div class="blocker" style="top: 0; bottom:0">
+                      <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
+                    </div>
                     <b-form-input size="lg"
                     type="search"
                     placeholder="Поиск">
@@ -59,6 +62,9 @@
                     Профиль
                 </b-dropdown-item>
                 <b-dropdown-item disabled href="#">
+                    <div class="blocker" style="top: 57px; bottom:57px">
+                      <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
+                    </div>
                     <font-awesome-icon :icon="['fa', 'cog']"
                     fixed-width class="mr-3" />
                     Настройки

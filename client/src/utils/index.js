@@ -33,9 +33,28 @@ export function passwordGenerator() {
 
   let password = '';
 
-  for (let i = 0; i < this.passwordNewSize; i += 1) {
+  for (let i = 0; i < this.passwordNewSize - 4; i += 1) {
     password += CharacterSet.charAt(Math.floor(Math.random() * CharacterSet.length));
   }
+
+  password += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  password += alphabetUpper.charAt(Math.floor(Math.random() * alphabetUpper.length));
+  password += numeric.charAt(Math.floor(Math.random() * numeric.length));
+  password += special.charAt(Math.floor(Math.random() * special.length));
+
+  password = password.split('');
+
+  // алгоритм Фишера-Йетса для перемешивания символов
+  let temp;
+  let j;
+  for (let i = password.length - 1; i > 0; i -= 1) {
+    j = Math.floor(Math.random() * (i + 1));
+    temp = password[j];
+    password[j] = password[i];
+    password[i] = temp;
+  }
+
+  password = password.join('');
 
   return password;
 }

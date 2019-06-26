@@ -17,7 +17,8 @@ from flask import current_app, json, Blueprint, \
 from functools import wraps
 
 from app import bcrypt, db
-from app.models import CmsUsers, CmsUsersSchema
+from app.models import CmsUsers, CmsUsersSchema, CmsProfileSchema
+from app.json_validation import profile_validator, password_validator
 
 API0 = Blueprint('API0', __name__)
 
@@ -201,6 +202,30 @@ def login():
 # ------------------------------------------------------------
 
 
+@API0.route('/profile/<int:uid>', methods=['GET'])
+@token_required
+def get_profile_by_id(current_user, uid):
+    """ Получение профиля пользователя по id в json"""
+
+    try:
+
+        user_schema = CmsProfileSchema()
+        user = CmsUsers.query.get(uid)
+        udata = user_schema.dump(user)
+
+        response = Response(
+            response=json.dumps(udata.data),
+            status=200,
+            mimetype='application/json'
+        )
+
+    except Exception:
+
+        response = server_error(request.args.get("dbg"))
+
+    return response
+
+
 @API0.route('/profile/<int:uid>/data', methods=['PUT'])
 @token_required
 def update_profile_data(current_user, uid):
@@ -209,44 +234,55 @@ def update_profile_data(current_user, uid):
     try:
 
         update_data = request.get_json()
+        #  Фото попать обязательно
+        update_data.pop('photo', None)
+        #  Не попать после реализации
+        update_data.pop('socials', None)
 
-        check = CmsUsers.query.filter(
-            ((CmsUsers.login == update_data['login']) |
-             (CmsUsers.email == update_data['email']) |
-             (CmsUsers.phone == update_data["phone"])) &
-            (CmsUsers.id != uid)).first()
+        if not profile_validator.is_valid(update_data):
+            errors = []
+            for error in sorted(profile_validator.iter_errors(
+                                update_data), key=str):
+                errors.append(error.message)
 
-        if check:
-
-            error_data = ''
-
-            if check.login == update_data['login']:
-                error_data = error_data + "логином"
-            if check.email == update_data['email']:
-                error_data = error_data + " / email"
-            if check.phone == update_data['phone']:
-                error_data = error_data + " / телефоном"
-
+            separator = '; '
+            error_text = separator.join(errors)
             response = Response(
-                response=json.dumps({'type': 'danger',
-                                     'text': 'Пользователь с такими '+error_data+' \
-существует!'}),
-                status=422,
-                mimetype='application/json'
-            )
+                    response=json.dumps({'type': 'danger',
+                                         'text': error_text}),
+                    status=422,
+                    mimetype='application/json'
+                )
+
         else:
-            CmsUsers.query.filter_by(id=uid).update(update_data)
-            db.session.commit()
+            exist = CmsUsers.exist(sid=uid, **{
+                                      'login': update_data['login'],
+                                      'email': update_data['email'],
+                                      'phone': update_data['phone']
+                                      })
 
-            response = Response(
-                response=json.dumps({'type': 'success',
-                                     'text': 'Данные профиля обновлены!',
-                                     'link': url_for('.get_user_by_id',
-                                                     uid=uid,
-                                                     _external=True)}),
-                status=200,
-                mimetype='application/json'
-            )
+            if exist:
+                response = Response(
+                    response=json.dumps({'type': 'danger',
+                                         'text': 'Уже есть пользователь с такими логином, \
+телефоном или почтой! Выберите другие!'}),
+                    status=422,
+                    mimetype='application/json'
+                )
+            else:
+
+                CmsUsers.query.filter_by(id=uid).update(update_data)
+                db.session.commit()
+
+                response = Response(
+                    response=json.dumps({'type': 'success',
+                                         'text': 'Данные профиля обновлены!',
+                                         'link': url_for('.get_user_by_id',
+                                                         uid=uid,
+                                                         _external=True)}),
+                    status=200,
+                    mimetype='application/json'
+                )
 
     except Exception:
 
@@ -264,47 +300,59 @@ def update_profile_password(current_user, uid):
 
         update_data = request.get_json()
 
-        auth_data = {'login': update_data['login'],
-                     'password': update_data['passwordOld']}
-        user = CmsUsers.authenticate(**auth_data)
+        if not password_validator.is_valid(update_data):
+            errors = []
+            for error in sorted(password_validator.iter_errors(
+                                update_data), key=str):
+                errors.append(error.message)
 
-        if not user[0]:
-
+            separator = '; '
+            error_text = separator.join(errors)
             response = Response(
-                response=json.dumps({'type': 'error',
-                                     'text': user[1],
-                                     'field': user[2]}),
-                status=401,
-                mimetype='application/json'
-            )
-
-            return response
-
+                    response=json.dumps({'type': 'danger',
+                                         'text': error_text}),
+                    status=422,
+                    mimetype='application/json'
+                )
         else:
-            update_data.update(
-                passwordNew=bcrypt.generate_password_hash(
-                    update_data['passwordNew']).decode('utf-8'))
-            CmsUsers.query.filter_by(id=uid).update(
-                {'password': update_data['passwordNew']})
-            db.session.commit()
 
-            response = Response(
-                response=json.dumps({'type': 'success',
-                                     'text': 'Успешно обновлен пароль!',
-                                     'link': url_for('.get_user_by_id',
-                                                     uid=uid,
-                                                     _external=True)}),
-                status=200,
-                mimetype='application/json'
-            )
+            auth_data = {'login': update_data['login'],
+                         'password': update_data['passwordOld']}
+            user = CmsUsers.authenticate(**auth_data)
 
-            return response
+            if not user[0]:
+
+                response = Response(
+                    response=json.dumps({'type': 'error',
+                                         'text': user[1],
+                                         'field': user[2]}),
+                    status=401,
+                    mimetype='application/json'
+                )
+
+            else:
+                update_data.update(
+                    passwordNew=bcrypt.generate_password_hash(
+                        update_data['passwordNew']).decode('utf-8'))
+                CmsUsers.query.filter_by(id=uid).update(
+                    {'password': update_data['passwordNew']})
+                db.session.commit()
+
+                response = Response(
+                    response=json.dumps({'type': 'success',
+                                         'text': 'Успешно обновлен пароль!',
+                                         'link': url_for('.get_user_by_id',
+                                                         uid=uid,
+                                                         _external=True)}),
+                    status=200,
+                    mimetype='application/json'
+                )
 
     except Exception:
 
         response = server_error(request.args.get("dbg"))
 
-    return "got"
+    return response
 
 
 @API0.route('/profile/<int:uid>/avatar', methods=['PUT'])
@@ -315,45 +363,66 @@ def update_profile_avatar(current_user, uid):
     try:
         usr_query = CmsUsers.query.filter_by(id=uid)
 
-        if request.files.get('avatar'):
-            avatar_image = request.files['avatar']
+        if request.files.getlist('avatar'):
 
-            if usr_query.first().photo:
-                img_extension = avatar_image.content_type.split('/')[1]
-                img_file_name = usr_query.first().photo.split('.')[0] + '.' + \
-                    img_extension
-                os.remove(os.path.join(
-                    current_app.config['CMS_USERS_AVATARS'],
-                    usr_query.first().photo))
+            if not len(request.files.getlist('avatar')) > 1:
+
+                avatar_image = request.files['avatar']
+                if usr_query.first().photo:
+                    img_extension = avatar_image.content_type.split('/')[1]
+                    img_file_name = usr_query.first().photo.split('.')[0] + \
+                        '.' + img_extension
+                    os.remove(os.path.join(
+                        current_app.config['CMS_USERS_AVATARS'],
+                        usr_query.first().photo))
+                else:
+                    img_extension = avatar_image.content_type.split('/')[1]
+                    img_file_name = uuid.uuid1().hex + '.' + img_extension
+
+                usr_query.update(
+                    {'photo': img_file_name})
+                db.session.commit()
+
+                avatar_image.save(
+                    os.path.join(
+                        current_app.config['CMS_USERS_AVATARS'],
+                        img_file_name))
+
+                response = Response(
+                    response=json.dumps({'type': 'success',
+                                         'text': 'Фотокарточка вклеена!',
+                                         'link': url_for('.get_user_by_id',
+                                                         uid=uid,
+                                                         _external=True)}),
+                    status=200,
+                    mimetype='application/json'
+                )
             else:
-                img_extension = avatar_image.content_type.split('/')[1]
-                img_file_name = uuid.uuid1().hex + '.' + img_extension
-
-            usr_query.update(
-                {'photo': img_file_name})
-            db.session.commit()
-
-            avatar_image.save(
-                os.path.join(
-                    current_app.config['CMS_USERS_AVATARS'], img_file_name))
+                response = Response(
+                    response=json.dumps({'type': 'danger',
+                                         'text': 'Вы отправили \
+более 1 файла!'}),
+                    status=422,
+                    mimetype='application/json'
+                )
         else:
-            os.remove(
-                os.path.join(
-                    current_app.config['CMS_USERS_AVATARS'],
-                    usr_query.first().photo))
-            usr_query.update(
-                {'photo': None})
+            if usr_query.first().photo:
+                os.remove(
+                    os.path.join(
+                        current_app.config['CMS_USERS_AVATARS'],
+                        usr_query.first().photo))
+            usr_query.update({'photo': None})
             db.session.commit()
 
-        response = Response(
-            response=json.dumps({'type': 'success',
-                                 'text': 'Успешно обновлен аватар!',
-                                 'link': url_for('.get_user_by_id',
-                                                 uid=uid,
-                                                 _external=True)}),
-            status=200,
-            mimetype='application/json'
-        )
+            response = Response(
+                    response=json.dumps({'type': 'success',
+                                         'text': 'Фотокарточка вырезана!',
+                                         'link': url_for('.get_user_by_id',
+                                                         uid=uid,
+                                                         _external=True)}),
+                    status=200,
+                    mimetype='application/json'
+                )
 
         return response
 
@@ -372,7 +441,7 @@ def update_profile_avatar(current_user, uid):
 
         response = server_error(request.args.get("dbg"))
 
-    return "got"
+    return response
 
 # ------------------------------------------------------------
 # Администрирование пользователей

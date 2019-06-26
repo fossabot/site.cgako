@@ -8,7 +8,9 @@
         <b-card tag="article" class="profile-form shaded"
         header-tag="header" footer-tag="footer">
 
-          <h3 slot="header" class="mb-0">Форма редактирования профиля</h3>
+          <h3 slot="header" class="mb-0">
+            Форма редактирования профиля
+          </h3>
           <b-card-text class="text-center">
 
             <b-form @submit="onSubmitData">
@@ -235,8 +237,13 @@
       <div class="col-3">
         <b-card tag="article" style="max-width: 20rem;" class="profile-card shaded text-center">
           <div class="card-profile-image mb-4 mx-auto">
-            <div class="profile-image-overlay" title="Вклеить фотокарточку" v-b-modal.avatar-modal>
-              <font-awesome-icon :icon="['fa', 'upload']" fixed-width />
+            <div class="profile-image-overlay" title="Фотокарточка">
+              <div v-b-modal.avatar-modal title="Вклеить новую">
+                <font-awesome-icon :icon="['fa', 'upload']" fixed-width />
+              </div>
+              <div @click="onSubmitAvatar" title="Вырезать">
+                <font-awesome-icon :icon="['fa', 'trash']" fixed-width />
+              </div>
             </div>
             <img v-if="profile.photo" :src="'/static/profile_avatars/'+profile.photo"
             alt="Фотокарточка" class="profile-image">
@@ -251,6 +258,9 @@
             <p v-if=profile.about_me class="text-justify m-0 pt-3">{{profile.about_me}}</p>
           </b-card-text>
           <div slot="footer" class="text-left">
+            <div class="blocker" style="top: 80%; bottom:0;">
+              <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
+            </div>
             <button type="button" title="Подключить ВКонтакте"
             class="mb-2 mr-2 btn"
             v-bind:class="[
@@ -431,7 +441,7 @@
 
         <b-button class="mb-3" type="submit" block variant="primary"
         title="Установить новую фотокарточку"
-        :disabled="$v.imageUpdate.$invalid">
+        :disabled="!$v.imageUpdate.$anyDirty || $v.imageUpdate.$invalid">
           <font-awesome-icon :icon="['fa', 'save']" fixed-width />
         </b-button>
 
@@ -579,34 +589,38 @@ export default {
     onSubmitData(evt) {
       evt.preventDefault();
       this.$v.$touch();
-      if (!this.$v.$invalid) {
-        this.profile.last_login = moment(this.profile.last_login).format('YYYY-MM-DD HH:mm:ss');
+
+      if (!this.$v.profile.$invalid) {
         this.profile.birth_date = moment(this.profile.birth_date).format('YYYY-MM-DD');
         this.$store.dispatch('updateProfileData', this.profile);
       }
     },
     onSubmitPassword(evt) {
       evt.preventDefault();
-      this.passwordError = false;
-      this.$store.dispatch('updateProfilePassword', this.passwordUpdate);
+      this.$v.passwordUpdate.$touch();
+      if (!this.$v.passwordUpdate.$invalid) {
+        this.passwordError = false;
+        this.$store.dispatch('updateProfilePassword', this.passwordUpdate);
+      }
     },
     onSubmitAvatar(evt) {
       evt.preventDefault();
-      const formData = new FormData();
-      if (this.file) {
-        formData.append('avatar', this.file[0]);
+      this.$v.imageUpdate.$touch();
+
+      if (!this.$v.imageUpdate.$invalid) {
+        const formData = new FormData();
+        if (this.file) {
+          formData.append('avatar', this.file[0]);
+        }
+        this.isActiveProgress = true;
+        this.$store.dispatch('updateProfileAvatar', formData);
       }
-      this.isActiveProgress = true;
-      this.$store.dispatch('updateProfileAvatar', formData);
     },
   },
   computed: mapState({
     profile: state => state.profile,
     progressValue: state => state.uploadProgress,
     progressMax: state => state.uploadProgressMax,
-    isFormValid() {
-      return Object.keys(this.fields).every(field => this.fields[field].valid);
-    },
   }),
   mounted() {
     EventBus.$on('failedAuthentication', (msg) => {
