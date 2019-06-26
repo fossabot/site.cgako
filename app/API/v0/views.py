@@ -9,6 +9,7 @@ import traceback
 import uuid
 #  import base64
 import os
+import math
 
 from datetime import datetime, timedelta
 from urllib.parse import urljoin
@@ -108,9 +109,12 @@ def pagination_of_list(query_result, url, start, limit):
         abort(404)                  # Сделать адекватную обработку
 
     response_obj = {}
-    response_obj['start'] = start
-    response_obj['limit'] = limit
+    response_obj['start'] = start   # Сделать проверку на отрицательные числа
+    response_obj['limit'] = limit   # Сделать проверку на отрицательные числа
     response_obj['count'] = records_count
+
+    pages_count = math.ceil(records_count / limit)
+    response_obj['pages'] = pages_count if pages_count > 0 else 1
 
     # Создаем URL на предыдущую страницу
     if start == 1:

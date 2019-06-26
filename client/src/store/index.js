@@ -9,9 +9,9 @@ Vue.use(Vuex);
 
 // Источник данных
 const state = {
-  users: [],
-  profile: { socials: '' },
-  uid: '',
+  users: [], // список пользователей CMS
+  uid: '', // id текущего пользователя
+  profile: {}, // профиль текущего пользователя
   uploadProgress: 0,
   uploadProgressMax: 100,
   jwt: localStorage.getItem('token') || '', // Загрузить токен из хранилища, или инициировать пустой, если нет в хранилище
@@ -31,7 +31,7 @@ const actions = {
   logout(context) {
     context.commit('unsetJwtToken');
   },
-  // Загрузить данные вошедшего пользователя
+  // Загрузить данные профиля вошедшего пользователя
   loadProfile(context) {
     return axios.get(`/api/profile/${context.state.uid}`, { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
       .then((response) => {
@@ -90,7 +90,14 @@ const actions = {
   },
   // Загрузить пользователей
   loadUsers(context) {
-    return axios.get('/api/users', { headers: { Authorization: `Bearer: ${context.state.jwt}` } })
+    return axios.get('/api/users',
+      {
+        headers: { Authorization: `Bearer: ${context.state.jwt}` },
+        params: {
+          limit: 1,
+          start: 2,
+        },
+      })
       .then((response) => {
         context.commit('setUsers', { users: response.data });
       })
