@@ -1,11 +1,14 @@
 <template>
   <main class="container-fluid">
     <breadcumbs></breadcumbs>
-    {{listControl}}
-    <b-row class="pb-3 m-0 w-100">
+
+    <b-row class="pb-4 m-0 w-100">
       <b-col align-self="start" class="text-center">
         <b-row class="justify-content-start align-middle align-items-center">
-          <a href="#" class="alert-link text-info pr-3">Всего товарищей: {{users.count}}</a>
+          <a href="#" class="alert-link text-info pr-3">
+            Всего {{ users.count }}
+            {{ users.count | declension(["товарищ", "товарища", "товарищей"]) }}
+          </a>
           <button type="button" title="Создать запись" class="btn btn-success btn-sm mr-1">
             <font-awesome-icon icon="plus" fixed-width />
           </button>
@@ -31,12 +34,15 @@
         </b-row>
       </b-col>
 
-      <b-col align-self="center" style="display:none" class="text-center">
+      <b-col sm="4" class="text-center">
         <b-row class="justify-content-center align-middle align-items-center">
-          <a href="#" class="alert-link text-info pr-3">Страниц: {{users.pages}}</a>
-          <b-input-group class="m-0 w-50" size="sm">
-              <b-form-input class="form-control" type="number" placeholder="На страницу:" min=1 />
-          </b-input-group>
+          <b-col sm="6">
+            <b-input-group :append="'/ ' + users.pages + ' cтраниц'" size="sm">
+              <b-form-input type="number" min=1 :max="users.pages"
+              v-model="listControl.page"
+              v-on:input="listBegin(); listChange()"/>
+            </b-input-group>
+          </b-col>
         </b-row>
       </b-col>
 
@@ -45,19 +51,20 @@
           <b-col sm="6">
             <b-input-group prepend="Показывать:" size="sm">
               <b-form-input type="number" min=1 :max="users.count - listControl.start + 1"
-              v-model="listControl.limit"/>
+              v-model="listControl.limit"
+              v-on:input="listChange(); listControl.page = 1"/>
             </b-input-group>
           </b-col>
           <b-col sm="6">
             <b-input-group prepend="Начать с:" size="sm">
               <b-form-input type="number" min=1 :max="users.count"
               v-model="listControl.start"
-              v-on:input="listRows"/>
+              v-on:input="listRows(); listChange()"/>
             </b-input-group>
           </b-col>
-
         </b-row>
       </b-col>
+
     </b-row>
 
     <div class="row-fluid pb-3">
@@ -138,6 +145,7 @@ export default {
       selected: [],
       selectAll: false,
       listControl: {
+        page: 1,
         start: 1,
         limit: 2,
       },
@@ -148,7 +156,7 @@ export default {
     users: state => state.users,
   }),
   beforeMount() {
-    this.$store.dispatch('loadUsers');
+    this.$store.dispatch('loadUsers', { start: this.listControl.start, limit: this.listControl.limit });
   },
   methods: {
     select() {
@@ -160,10 +168,29 @@ export default {
       }
     },
     listRows() {
-      const newLimit = this.users.count - this.listControl.start + 1;
-      if (this.listControl.limit > newLimit) {
+      // Просчет количества показываемых строк в зависимости от индекса начальной
+      const newLimit = parseInt(parseInt(this.users.count, 10)
+      - parseInt(this.listControl.start, 10) + 1, 10);
+      const limit = parseInt(this.listControl.limit, 10);
+      if (limit > newLimit) {
         this.listControl.limit = newLimit;
       }
+    },
+    listBegin() {
+      /* Расчет новой начальной строки в зависимости от выбранной страницы
+      Получаем индекс последней строки на странице
+      Затем для получения индекса первой строки страницы
+      вычитаем количество ненужных строк (из количества на странице - сама строка) */
+      const newBegin = parseInt(parseInt(this.listControl.limit, 10)
+      * parseInt(this.listControl.page, 10) - (parseInt(this.listControl.limit - 1, 10)), 10);
+      if (newBegin > this.users.count) {
+        this.listControl.start = this.users.count;
+      } else {
+        this.listControl.start = newBegin;
+      }
+    },
+    listChange() {
+      this.$store.dispatch('loadUsers', { start: this.listControl.start, limit: this.listControl.limit });
     },
   },
 };

@@ -39,9 +39,6 @@
       </b-collapse>
 
       <b-list-group-item class="noselect" disabled>
-        <div class="blocker" style="top: 0; bottom:0">
-          <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
-        </div>
         <font-awesome-icon :icon="['fa', 'folder']" class="pr-3" fixed-width size="2x"/>
         Медиа
       </b-list-group-item>

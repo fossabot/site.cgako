@@ -55,6 +55,29 @@ Vue.use(require('vue-moment'), {
   moment,
 });
 
+// Фильтр для обработки склонений чисел
+Vue.filter('declension', (value, words) => {
+  if (!value) return '';
+
+  let word;
+  let iinumber;
+  const inumber = value % 100;
+
+  if (inumber >= 11 && inumber <= 19) {
+    word = words['2'];
+  } else {
+    iinumber = inumber % 10;
+    if (iinumber === 1) {
+      word = words['0'];
+    } else if (iinumber === 2 || iinumber === 3 || iinumber === 4) {
+      word = words['1'];
+    } else {
+      word = words['2'];
+    }
+  }
+  return word;
+});
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

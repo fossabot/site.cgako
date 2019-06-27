@@ -89,13 +89,13 @@ const actions = {
       });
   },
   // Загрузить пользователей
-  loadUsers(context) {
+  loadUsers(context, payload) {
     return axios.get('/api/users',
       {
         headers: { Authorization: `Bearer: ${context.state.jwt}` },
         params: {
-          limit: 1,
-          start: 2,
+          limit: payload.limit,
+          start: payload.start,
         },
       })
       .then((response) => {

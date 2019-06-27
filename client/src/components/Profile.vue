@@ -257,10 +257,8 @@
             <h2 class="pb-4">Должность</h2>
             <p v-if=profile.about_me class="text-justify m-0 pt-3">{{profile.about_me}}</p>
           </b-card-text>
+<!--
           <div slot="footer" class="text-left">
-            <div class="blocker" style="top: 80%; bottom:0;">
-              <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
-            </div>
             <button type="button" title="Подключить ВКонтакте"
             class="mb-2 mr-2 btn"
             v-bind:class="[
@@ -298,6 +296,7 @@
                 <font-awesome-icon :icon="['fab', 'google']" fixed-width />
             </button>
           </div>
+-->
         </b-card>
 
       </div>

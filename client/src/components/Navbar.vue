@@ -56,15 +56,18 @@
                     <b-img v-else :src="'/static/profile_avatars/default.png'"
                     rounded="circle" alt="Фотокарточка" class="w-100 h-100"></b-img>
                 </template>
+                <b-dropdown-text class="m-0 pl-4 p-3">
+                  Вы вошли как:<br>
+                  <b>@{{profile.login}}</b>
+                </b-dropdown-text>
+                <b-dropdown-divider class="m-0"></b-dropdown-divider>
                 <b-dropdown-item :to="{ name: 'UserProfile' }">
                     <font-awesome-icon :icon="['fa', 'user-circle']"
                     fixed-width class="mr-3" />
-                    Профиль
+                    Ваш профиль
                 </b-dropdown-item>
+                <b-dropdown-divider class="m-0"></b-dropdown-divider>
                 <b-dropdown-item disabled href="#">
-                    <div class="blocker" style="top: 57px; bottom:57px">
-                      <font-awesome-icon :icon="['fa', 'lock']" fixed-width />
-                    </div>
                     <font-awesome-icon :icon="['fa', 'cog']"
                     fixed-width class="mr-3" />
                     Настройки
